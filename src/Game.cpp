@@ -11,7 +11,6 @@ namespace CatBounce
 	void Game()
 	{
 		slWindow(WIDTH_SCREEN, HEIGHT_SCREEN, PROGRAM_NAME.c_str(), false);
-
 		Init();
 
 		while (!slShouldClose() && isRunning)
@@ -41,6 +40,7 @@ namespace CatBounce
 
 	void Draw()
 	{
+		// THERE ARE NO OTHER SCENES
 		Gameplay::Draw();
 	}
 }

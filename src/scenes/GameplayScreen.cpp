@@ -1,14 +1,21 @@
-#include "GameplayScreen.h"
+﻿#include "GameplayScreen.h"
 #include "../entities/Pallette.h"
 #include "../entities/Ball.h"
 #include "../utilities/Constants.h"
+#include "../Game.h"
 #include "sl.h"
+
+#include <iostream>
 
 namespace Gameplay
 {
 	Pallette pall;
 	Ball ball;
-	double deltaTime = slGetDeltaTime();
+	double deltaTime;
+	bool pause;
+
+	// PRIVATE FUNCTIONS
+	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 
 	void Init()
 	{
@@ -21,49 +28,88 @@ namespace Gameplay
 		ball.radius = 15.0;
 		ball.x = WIDTH_SCREEN / 2.0;
 		ball.y = HEIGHT_SCREEN / 2.0;
-		ball.speedX = 200.0;
-		ball.speedY = 250.0;
+		ball.speedX = 300.0;
+		ball.speedY = -350.0;
+
+		pause = false;
 	}
 
 	void Input()
 	{
-		if (slGetKey('a') || slGetKey('A'))
+		if (!pause)
 		{
-			pall.x -= pall.speed * deltaTime;
-		}
-		if (slGetKey('d') || slGetKey('D'))
-		{
-			pall.x += pall.speed * deltaTime;
+			if (slGetKey(SL_KEY_ESCAPE))
+			{
+				CatBounce::isRunning = false;
+			}
+
+			if (slGetKey('a') || slGetKey('A'))
+			{
+				pall.x -= pall.speed * deltaTime;
+			}
+			if (slGetKey('d') || slGetKey('D'))
+			{
+				pall.x += pall.speed * deltaTime;
+			}
 		}
 
 		// TEST!!!
 		if (slGetKey(' '))
 		{
-			ball.y += ball.speedY * deltaTime;
+			pause = true;
+		}
+		else
+		{
+			pause = false;
 		}
 	}
 
 	void Update()
 	{
-		if (pall.x - pall.width / 2.0 < 0)
-		{
-			pall.x = pall.width / 2.0;
-		}
+		deltaTime = slGetDeltaTime();
 
-		if (pall.x + pall.width / 2.0 > WIDTH_SCREEN)
+		if (!pause)
 		{
-			pall.x = WIDTH_SCREEN - pall.width / 2;
-		}
+			if (pall.x - pall.width / 2.0 < 0)
+			{
+				pall.x = pall.width / 2.0;
+			}
+			if (pall.x + pall.width / 2.0 > WIDTH_SCREEN)
+			{
+				pall.x = WIDTH_SCREEN - pall.width / 2;
+			}
 
-		if (ball.y + ball.radius > HEIGHT_SCREEN)
-		{
-			ball.speedY *= -1.0;
-		}
+			ball.y += ball.speedY * deltaTime;
+			ball.x += ball.speedX * deltaTime;
 
-		if (ball.y - ball.radius < 0)
-		{
-			ball.y = HEIGHT_SCREEN / 2.0;
-			ball.speedY *= -1.0;
+			if (ball.x - ball.radius < 0)
+			{
+				ball.x = ball.radius;
+				ball.speedX *= -1.0;
+			}
+			if (ball.x + ball.radius > WIDTH_SCREEN)
+			{
+				ball.x = WIDTH_SCREEN - ball.radius;
+				ball.speedX *= -1.0;
+			}
+
+			if (ball.y + ball.radius > HEIGHT_SCREEN)
+			{
+				ball.y = HEIGHT_SCREEN - ball.radius;
+				ball.speedY *= -1.0;
+			}
+			if (ball.y - ball.radius < 0)
+			{
+				ball.x = WIDTH_SCREEN / 2.0;
+				ball.y = HEIGHT_SCREEN / 2.0;
+				ball.speedY *= -1.0;
+			}
+
+			if (CheckCollisionPalletteBall(pall, ball))
+			{
+				ball.y = ball.y + ball.radius;
+				ball.speedY *= -1.0;
+			}
 		}
 	}
 
@@ -73,10 +119,40 @@ namespace Gameplay
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 
 		slRectangleFill(pall.x, pall.y, pall.width, pall.height);
+
+		slSetForeColor(0.0, 0.0, 1.0, 1.0);
 		slRectangleOutline(pall.x, pall.y, pall.width, pall.height);
 
+
+		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 		slCircleFill(ball.x, ball.y, ball.radius, 200);
 
+		slSetForeColor(1.0, 0.0, 0.0, 1.0);
+		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
+
 		slRender();
+	}
+
+	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball)
+	{
+		double leftPall = pall.x - pall.width / 2.0;
+		double rightPall = pall.x + pall.width / 2.0;
+		double topPall = pall.y + pall.height / 2.0;
+		double bottomPall = pall.y - pall.height / 2.0;
+
+		double leftBall = ball.x - ball.radius;
+		double rightBall = ball.x + ball.radius;
+		double topBall = ball.y + ball.radius;
+		double bottomBall = ball.y - ball.radius;
+
+		if (rightPall < leftBall ||
+			leftPall > rightBall ||
+			topPall < bottomBall ||
+			bottomPall > topBall)
+		{
+			return false;
+		}
+
+		return true;
 	}
 }
