@@ -139,12 +139,14 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\entities\Brick.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\scenes\GameplayScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\entities\Ball.h" />
+    <ClInclude Include="src\entities\Brick.h" />
     <ClInclude Include="src\entities\Pallette.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\scenes\GameplayScreen.h" />

@@ -1,6 +1,7 @@
 ﻿#include "GameplayScreen.h"
 #include "../entities/Pallette.h"
 #include "../entities/Ball.h"
+#include "../entities/Brick.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
 #include "sl.h"
@@ -11,11 +12,13 @@ namespace Gameplay
 {
 	Pallette pall;
 	Ball ball;
+	Brick bricks[MAX_BRICKS][MAX_BRICKS];
 	double deltaTime;
 	bool pause;
 
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
+	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
 
 	void Init()
 	{
@@ -30,6 +33,8 @@ namespace Gameplay
 		ball.y = HEIGHT_SCREEN / 2.0;
 		ball.speedX = 300.0;
 		ball.speedY = -350.0;
+
+		InitBricks(bricks);
 
 		pause = false;
 	}
@@ -47,6 +52,7 @@ namespace Gameplay
 			{
 				pall.x -= pall.speed * deltaTime;
 			}
+
 			if (slGetKey('d') || slGetKey('D'))
 			{
 				pall.x += pall.speed * deltaTime;
@@ -105,6 +111,18 @@ namespace Gameplay
 				ball.speedY *= -1.0;
 			}
 
+			for (int row = 0; row < MAX_BRICKS; row++)
+			{
+				for (int col = 0; col < MAX_BRICKS; col++)
+				{
+					if (bricks[row][col].isActive && CheckCollisionBallBrick(ball, bricks[row][col]))
+					{
+						bricks[row][col].isActive = false;
+						ball.speedY *= -1.0;
+					}
+				}
+			}
+
 			if (CheckCollisionPalletteBall(pall, ball))
 			{
 				ball.y = ball.y + ball.radius;
@@ -117,6 +135,8 @@ namespace Gameplay
 	{
 		slSetBackColor(0.0, 0.0, 0.0);
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
+
+		DrawBricks(bricks);
 
 		slRectangleFill(pall.x, pall.y, pall.width, pall.height);
 
@@ -144,6 +164,29 @@ namespace Gameplay
 		double rightBall = ball.x + ball.radius;
 		double topBall = ball.y + ball.radius;
 		double bottomBall = ball.y - ball.radius;
+
+		if (rightPall < leftBall ||
+			leftPall > rightBall ||
+			topPall < bottomBall ||
+			bottomPall > topBall)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	static bool CheckCollisionBallBrick(Ball ball, Brick& brick)
+	{
+		double leftBall = ball.x - ball.radius;
+		double rightBall = ball.x + ball.radius;
+		double topBall = ball.y + ball.radius;
+		double bottomBall = ball.y - ball.radius;
+
+		double leftPall = brick.x - brick.width / 2.0;
+		double rightPall = brick.x + brick.width / 2.0;
+		double topPall = brick.y + brick.height / 2.0;
+		double bottomPall = brick.y - brick.height / 2.0;
 
 		if (rightPall < leftBall ||
 			leftPall > rightBall ||
