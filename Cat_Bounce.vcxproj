@@ -139,7 +139,16 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\main.cpp" />
+    <ClCompile Include="src\scenes\GameplayScreen.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="src\entities\Ball.h" />
+    <ClInclude Include="src\entities\Pallette.h" />
+    <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\scenes\GameplayScreen.h" />
+    <ClInclude Include="src\utilities\Constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

@@ -1,8 +1,8 @@
-#include <iostream>
+#include "Game.h"
 
 int main()
 {
-	std::cout << "Project uploaded!" << std::endl << std::endl;
+	CatBounce::Game();
 
 	return 0;
 }
