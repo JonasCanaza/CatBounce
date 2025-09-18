@@ -6,8 +6,6 @@
 #include "../Game.h"
 #include "sl.h"
 
-#include <iostream>
-
 namespace Gameplay
 {
 	Pallette pall;
@@ -24,13 +22,13 @@ namespace Gameplay
 	{
 		pall.width = 100.0;
 		pall.height = 30.0;
-		pall.x = WIDTH_SCREEN / 2.0;
+		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
 		pall.speed = 600.0;
 
 		ball.radius = 15.0;
-		ball.x = WIDTH_SCREEN / 2.0;
-		ball.y = HEIGHT_SCREEN / 2.0;
+		ball.x = SCREEN_WIDTH / 2.0;
+		ball.y = SCREEN_HEIGHT / 2.0;
 		ball.speedX = 300.0;
 		ball.speedY = -350.0;
 
@@ -45,7 +43,7 @@ namespace Gameplay
 		{
 			if (slGetKey(SL_KEY_ESCAPE))
 			{
-				CatBounce::isRunning = false;
+				CatBounce::currentScene = CatBounce::Scenes::MainMenu;
 			}
 
 			if (slGetKey('a') || slGetKey('A'))
@@ -80,9 +78,9 @@ namespace Gameplay
 			{
 				pall.x = pall.width / 2.0;
 			}
-			if (pall.x + pall.width / 2.0 > WIDTH_SCREEN)
+			if (pall.x + pall.width / 2.0 > SCREEN_WIDTH)
 			{
-				pall.x = WIDTH_SCREEN - pall.width / 2;
+				pall.x = SCREEN_WIDTH - pall.width / 2;
 			}
 
 			ball.y += ball.speedY * deltaTime;
@@ -93,21 +91,21 @@ namespace Gameplay
 				ball.x = ball.radius;
 				ball.speedX *= -1.0;
 			}
-			if (ball.x + ball.radius > WIDTH_SCREEN)
+			if (ball.x + ball.radius > SCREEN_WIDTH)
 			{
-				ball.x = WIDTH_SCREEN - ball.radius;
+				ball.x = SCREEN_WIDTH - ball.radius;
 				ball.speedX *= -1.0;
 			}
 
-			if (ball.y + ball.radius > HEIGHT_SCREEN)
+			if (ball.y + ball.radius > SCREEN_HEIGHT)
 			{
-				ball.y = HEIGHT_SCREEN - ball.radius;
+				ball.y = SCREEN_HEIGHT - ball.radius;
 				ball.speedY *= -1.0;
 			}
 			if (ball.y - ball.radius < 0)
 			{
-				ball.x = WIDTH_SCREEN / 2.0;
-				ball.y = HEIGHT_SCREEN / 2.0;
+				ball.x = SCREEN_WIDTH / 2.0;
+				ball.y = SCREEN_HEIGHT / 2.0;
 				ball.speedY *= -1.0;
 			}
 
@@ -183,15 +181,15 @@ namespace Gameplay
 		double topBall = ball.y + ball.radius;
 		double bottomBall = ball.y - ball.radius;
 
-		double leftPall = brick.x - brick.width / 2.0;
-		double rightPall = brick.x + brick.width / 2.0;
-		double topPall = brick.y + brick.height / 2.0;
-		double bottomPall = brick.y - brick.height / 2.0;
+		double leftBrick = brick.x - brick.width / 2.0;
+		double rightBrick = brick.x + brick.width / 2.0;
+		double topBrick = brick.y + brick.height / 2.0;
+		double bottomBrick = brick.y - brick.height / 2.0;
 
-		if (rightPall < leftBall ||
-			leftPall > rightBall ||
-			topPall < bottomBall ||
-			bottomPall > topBall)
+		if (rightBrick < leftBall ||
+			leftBrick > rightBall ||
+			topBrick < bottomBall ||
+			bottomBrick > topBall)
 		{
 			return false;
 		}

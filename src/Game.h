@@ -12,6 +12,7 @@ namespace CatBounce
 
 	extern Scenes currentScene;
 	extern bool isRunning;
+	extern int font;
 
 	void Game();
 	void Init();

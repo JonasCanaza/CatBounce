@@ -9,7 +9,7 @@ void InitBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS])
 	double spacing = 5.0;
 	double marginY = 50.0;
 	double totalWidth = MAX_BRICKS * brickWidth + (MAX_BRICKS - 1) * spacing;
-	double offsetX = (WIDTH_SCREEN - totalWidth) / 2.0;
+	double offsetX = (SCREEN_WIDTH - totalWidth) / 2.0;
 
 	for (int row = 0; row < MAX_BRICKS; row++)
 	{
@@ -18,7 +18,7 @@ void InitBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS])
 			bricks[row][col].width = brickWidth;
 			bricks[row][col].height = brickHeight;
 			bricks[row][col].x = offsetX + brickWidth / 2.0 + col * (brickWidth + spacing);
-			bricks[row][col].y = HEIGHT_SCREEN - (marginY + brickHeight / 2.0 + row * (brickHeight + spacing));
+			bricks[row][col].y = SCREEN_HEIGHT - (marginY + brickHeight / 2.0 + row * (brickHeight + spacing));
 			bricks[row][col].texture = 0;
 			bricks[row][col].isActive = true;
 		}

@@ -141,15 +141,23 @@
   <ItemGroup>
     <ClCompile Include="src\entities\Brick.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\interface\Button.cpp" />
     <ClCompile Include="src\main.cpp" />
-    <ClCompile Include="src\scenes\GameplayScreen.cpp" />
+    <ClCompile Include="src\screen\CreditsScreen.cpp" />
+    <ClCompile Include="src\screen\GameplayScreen.cpp" />
+    <ClCompile Include="src\screen\HowToPlayScreen.cpp" />
+    <ClCompile Include="src\screen\MainMenuScreen.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\entities\Ball.h" />
     <ClInclude Include="src\entities\Brick.h" />
     <ClInclude Include="src\entities\Pallette.h" />
     <ClInclude Include="src\Game.h" />
-    <ClInclude Include="src\scenes\GameplayScreen.h" />
+    <ClInclude Include="src\interface\Button.h" />
+    <ClInclude Include="src\screen\CreditsScreen.h" />
+    <ClInclude Include="src\screen\GameplayScreen.h" />
+    <ClInclude Include="src\screen\HowToPlayScreen.h" />
+    <ClInclude Include="src\screen\MainMenuScreen.h" />
     <ClInclude Include="src\utilities\Constants.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
