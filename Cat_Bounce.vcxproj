@@ -119,6 +119,10 @@
       <AdditionalDependencies>sigil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <PerUserRedirection>true</PerUserRedirection>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(SolutionDir)lib\sigil\dll\*.dll" "$(OutDir)" /y
+xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
@@ -131,12 +135,17 @@
       <AdditionalIncludeDirectories>$(SolutionDir)lib\sigil\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <SubSystem>Console</SubSystem>
+      <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalLibraryDirectories>$(SolutionDir)lib\sigil\lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>sigil.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <PerUserRedirection>true</PerUserRedirection>
+      <EntryPointSymbol>mainCRTStartup</EntryPointSymbol>
     </Link>
+    <PostBuildEvent>
+      <Command>copy "$(SolutionDir)lib\sigil\dll\*.dll" "$(OutDir)" /y
+xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\entities\Brick.cpp" />
