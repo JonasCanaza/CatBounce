@@ -6,7 +6,7 @@ void InitBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS])
 {
 	double brickWidth = 90.0;
 	double brickHeight = 50.0;
-	double spacing = 5.0;
+	double spacing = 0.0;
 	double marginY = 50.0;
 	double totalWidth = MAX_BRICKS * brickWidth + (MAX_BRICKS - 1) * spacing;
 	double offsetX = (SCREEN_WIDTH - totalWidth) / 2.0;

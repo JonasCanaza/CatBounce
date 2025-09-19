@@ -7,4 +7,5 @@ struct Ball
 	double y;
 	double speedX;
 	double speedY;
+	bool isActive;
 };

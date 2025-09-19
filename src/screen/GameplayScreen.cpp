@@ -6,17 +6,26 @@
 #include "../Game.h"
 #include "sl.h"
 
+#include <string>
+#include <cmath>
+#include <iostream>
+
 namespace Gameplay
 {
-	Pallette pall;
-	Ball ball;
-	Brick bricks[MAX_BRICKS][MAX_BRICKS];
-	double deltaTime;
-	bool pause;
+	static Pallette pall;
+	static Ball ball;
+	static Brick bricks[MAX_BRICKS][MAX_BRICKS];
+	static bool pause;
+	static bool allBricksDestroyed = false;
+	static double deltaTime;
 
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
+	static bool ThereBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS]);
+	static bool IsPlayerAlive(Pallette pall);
+	static void PrintScreenWinner();
+	static void ResetBall();
 
 	void Init()
 	{
@@ -25,12 +34,14 @@ namespace Gameplay
 		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
 		pall.speed = 600.0;
+		pall.lives = 3;
 
 		ball.radius = 15.0;
 		ball.x = SCREEN_WIDTH / 2.0;
 		ball.y = SCREEN_HEIGHT / 2.0;
 		ball.speedX = 300.0;
-		ball.speedY = -350.0;
+		ball.speedY = 400.0;
+		ball.isActive = false;
 
 		InitBricks(bricks);
 
@@ -66,6 +77,11 @@ namespace Gameplay
 		{
 			pause = false;
 		}
+
+		if (slGetKey('E'))
+		{
+			ball.isActive = true;
+		}
 	}
 
 	void Update()
@@ -83,8 +99,16 @@ namespace Gameplay
 				pall.x = SCREEN_WIDTH - pall.width / 2;
 			}
 
-			ball.y += ball.speedY * deltaTime;
-			ball.x += ball.speedX * deltaTime;
+			if (ball.isActive)
+			{
+				ball.y += ball.speedY * deltaTime;
+				ball.x += ball.speedX * deltaTime;
+			}
+			else
+			{
+				ball.x = pall.x;
+				ball.y = pall.y + pall.height + ball.radius;
+			}
 
 			if (ball.x - ball.radius < 0)
 			{
@@ -102,11 +126,11 @@ namespace Gameplay
 				ball.y = SCREEN_HEIGHT - ball.radius;
 				ball.speedY *= -1.0;
 			}
-			if (ball.y - ball.radius < 0)
+			if (ball.y + ball.radius < 0)
 			{
-				ball.x = SCREEN_WIDTH / 2.0;
-				ball.y = SCREEN_HEIGHT / 2.0;
-				ball.speedY *= -1.0;
+				ball.speedY = std::abs(ball.speedY);
+				pall.lives--;
+				ResetBall();
 			}
 
 			for (int row = 0; row < MAX_BRICKS; row++)
@@ -123,8 +147,56 @@ namespace Gameplay
 
 			if (CheckCollisionPalletteBall(pall, ball))
 			{
-				ball.y = ball.y + ball.radius;
+				if (ball.y - ball.radius < pall.y + pall.height / 2.0 &&
+					ball.y - ball.radius > pall.y - pall.height / 2.0 &&
+					ball.x > pall.x - pall.width / 2.0 - ball.radius &&
+					ball.x < pall.x + pall.width / 2.0 + ball.radius)
+				{
+					ball.y = pall.y + pall.height / 2.0 + ball.radius;
+					std::cout << "Superior!" << std::endl;
+				}
+				else
+				{
+					if (ball.x < pall.x)
+					{
+						ball.x = pall.x - pall.width / 2.0 - ball.radius;
+						ball.speedX = -fabs(ball.speedX);
+						std::cout << "Left!" << std::endl;
+					}
+					else
+					{
+						ball.x = pall.x + pall.width / 2.0 + ball.radius;
+						ball.speedX = fabs(ball.speedX);
+						std::cout << "Right!" << std::endl;
+					}
+				}
+
 				ball.speedY *= -1.0;
+
+				double relativeImpact = (ball.x - pall.x) / (pall.width / 2.0);
+
+				if (relativeImpact < -1.0)
+				{
+					relativeImpact = -1.0;
+				}
+
+				if (relativeImpact > 1.0)
+				{
+					relativeImpact = 1.0;
+				}
+
+				double maxDeviation = 400.0;
+				ball.speedX = maxDeviation * relativeImpact;
+			}
+
+			if (!IsPlayerAlive(pall))
+			{
+				std::cout << "Loser!!!";
+			}
+
+			if (!ThereBricks(bricks))
+			{
+				std::cout << "Winner!!!";
 			}
 		}
 	}
@@ -147,6 +219,14 @@ namespace Gameplay
 
 		slSetForeColor(1.0, 0.0, 0.0, 1.0);
 		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
+
+		std::string textLive = "Live " + std::to_string(pall.lives);
+		slText(300, 100, textLive.c_str());
+
+		if (!ThereBricks(bricks))
+		{
+			PrintScreenWinner();
+		}
 
 		slRender();
 	}
@@ -195,5 +275,45 @@ namespace Gameplay
 		}
 
 		return true;
+	}
+
+	static bool ThereBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS])
+	{
+		for (int row = 0; row < MAX_BRICKS; row++)
+		{	
+			for (int col = 0; col < MAX_BRICKS; col++)
+			{
+				if (bricks[row][col].isActive)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	static bool IsPlayerAlive(Pallette pall)
+	{
+		if (pall.lives <= 0)
+		{
+			return false;
+		}
+
+		return true;
+	}
+
+	static void PrintScreenWinner()
+	{
+		slSetForeColor(0.0, 0.0, 0.0, 0.75);
+		slRectangleFill(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
+		slSetForeColor(1.0, 1.0, 1.0, 1.0);
+		slText(40.0, 40.0, "You win");
+	}
+
+	static void ResetBall()
+	{
+
+		ball.isActive = false;
 	}
 }
