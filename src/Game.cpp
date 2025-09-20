@@ -8,7 +8,7 @@
 
 namespace CatBounce
 {
-	Scenes currentScene = Scenes::MainMenu;
+	Scenes currentScene = Scenes::Gameplay;
 	bool isRunning = true;
 
 	int normalFont;

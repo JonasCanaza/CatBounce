@@ -12,12 +12,15 @@
 
 namespace Gameplay
 {
+	static int normalPalletteTexture;
+
 	static Pallette pall;
 	static Ball ball;
 	static Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
 	static bool pause;
 	static bool allBricksDestroyed = false;
 	static double deltaTime;
+	static double collisionCooldown = 0.0;
 
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
@@ -29,19 +32,21 @@ namespace Gameplay
 
 	void Init()
 	{
+		normalPalletteTexture = slLoadTexture("res/images/normalPallette.png");
+
 		pall.width = 100.0;
-		pall.height = 30.0;
+		pall.height = 50.0;
 		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
 		pall.speed = 600.0;
 		pall.speed = 600.0;
-		pall.lives = 3;
+		pall.lives = 30;
 
 		ball.radius = 15.0;
 		ball.x = SCREEN_WIDTH / 2.0;
 		ball.y = SCREEN_HEIGHT / 2.0;
 		ball.speedX = 300.0;
-		ball.speedY = 400.0;
+		ball.speedY = 375.0;
 		ball.isActive = false;
 
 		InitBricks(bricks);
@@ -89,6 +94,16 @@ namespace Gameplay
 	{
 		deltaTime = slGetDeltaTime();
 
+		if (collisionCooldown > 0.0)
+		{
+			collisionCooldown -= deltaTime;
+
+			if (collisionCooldown <= 0.0)
+			{
+				collisionCooldown = 0.0;
+			}
+		}
+
 		if (!pause)
 		{
 			if (pall.x - pall.width / 2.0 < 0)
@@ -109,6 +124,23 @@ namespace Gameplay
 			{
 				ball.x = pall.x;
 				ball.y = pall.y + pall.height + ball.radius;
+
+				//if (slGetKey(SL_KEY_UP))
+				//{
+				//	ball.y += 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_LEFT))
+				//{
+				//	ball.x -= 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_DOWN))
+				//{
+				//	ball.y -= 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_RIGHT))
+				//{
+				//	ball.x += 300 * deltaTime;
+				//}
 			}
 
 			if (ball.x - ball.radius < 0)
@@ -146,33 +178,53 @@ namespace Gameplay
 				}
 			}
 
-			if (CheckCollisionPalletteBall(pall, ball))
+			if (CheckCollisionPalletteBall(pall, ball) && collisionCooldown <= 0.0)
 			{
-				if (ball.y - ball.radius < pall.y + pall.height / 2.0 &&
-					ball.y - ball.radius > pall.y - pall.height / 2.0 &&
-					ball.x > pall.x - pall.width / 2.0 - ball.radius &&
-					ball.x < pall.x + pall.width / 2.0 + ball.radius)
-				{
-					ball.y = pall.y + pall.height / 2.0 + ball.radius;
-					std::cout << "Superior!" << std::endl;
-				}
-				else
-				{
-					if (ball.x < pall.x)
-					{
-						ball.x = pall.x - pall.width / 2.0 - ball.radius;
-						ball.speedX = -fabs(ball.speedX);
-						std::cout << "Left!" << std::endl;
-					}
-					else
-					{
-						ball.x = pall.x + pall.width / 2.0 + ball.radius;
-						ball.speedX = fabs(ball.speedX);
-						std::cout << "Right!" << std::endl;
-					}
-				}
+				double deltaX = ball.x - pall.x;
+				double deltaY = ball.y - pall.y;
 
-				ball.speedY *= -1.0;
+				double overlapHorizontal = (pall.width / 2.0 + ball.radius) - fabs(deltaX);
+				double overlapVertical = (pall.height / 2.0 + ball.radius) - fabs(deltaY);
+
+				if (overlapHorizontal < overlapVertical)
+				{
+					if (deltaX < 0) // LEFT
+					{
+						ball.x = pall.x - pall.width / 2.0 - ball.radius - 0.1;
+						ball.speedX = -fabs(ball.speedX);
+
+						if (ball.y > pall.y)
+						{
+							ball.speedY *= -1.0;
+							std::cout << "Left TOP!" << std::endl;
+						}
+						else
+						{
+							std::cout << "Left BUTTOM!" << std::endl;
+						}
+					}
+					else // RIGHT
+					{
+						ball.x = pall.x + pall.width / 2.0 + ball.radius + 0.1;
+						ball.speedX = fabs(ball.speedX);
+
+						if (ball.y > pall.y)
+						{
+							ball.speedY *= -1.0;
+							std::cout << "Right TOP!" << std::endl;
+						}
+						else
+						{
+							std::cout << "Right BUTTOM!" << std::endl;
+						}
+					}
+				}
+				else // TOP
+				{
+					ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
+					ball.speedY *= -1.0;
+					std::cout << "Top!" << std::endl;
+				}
 
 				double relativeImpact = (ball.x - pall.x) / (pall.width / 2.0);
 
@@ -188,6 +240,8 @@ namespace Gameplay
 
 				double maxDeviation = 400.0;
 				ball.speedX = maxDeviation * relativeImpact;
+
+				collisionCooldown = 0.5;
 			}
 
 			if (!IsPlayerAlive(pall))
@@ -209,7 +263,7 @@ namespace Gameplay
 
 		DrawBricks(bricks);
 
-		slRectangleFill(pall.x, pall.y, pall.width, pall.height);
+		slSprite(normalPalletteTexture, pall.x, pall.y, pall.width, pall.height);
 
 		slSetForeColor(0.0, 0.0, 1.0, 1.0);
 		slRectangleOutline(pall.x, pall.y, pall.width, pall.height);
