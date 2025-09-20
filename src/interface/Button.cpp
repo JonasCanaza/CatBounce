@@ -1,6 +1,7 @@
 #include "Button.h"
 #include "sl.h"
 #include "../Game.h"
+#include "../utilities/Constants.h"
 
 Button CreateButton(double x, double y, double width, double height, std::string text)
 {
@@ -72,6 +73,10 @@ void DrawButton(Button button)
     }
 
     slSprite(textureToUse, button.x, button.y, button.width, button.height);
+    slSetFont(CatBounce::specialFont, MENU_TEXT_SIZE);
+    double textWidth = slGetTextWidth(button.text.c_str());
+    double textHeight = slGetTextHeight(button.text.c_str());;
+    slText(button.x - textWidth / 2.0, button.y - textHeight / 2.0, button.text.c_str());
 }
 
 bool IsMouseOverButton(Button button)

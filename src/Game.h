@@ -12,7 +12,8 @@ namespace CatBounce
 
 	extern Scenes currentScene;
 	extern bool isRunning;
-	extern int font;
+	extern int normalFont;
+	extern int specialFont;
 
 	extern int normalBallTexture;
 

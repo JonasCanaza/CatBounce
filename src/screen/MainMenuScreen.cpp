@@ -14,7 +14,7 @@ namespace MainMenu
 	static Background bgOne;
 	static const int MAX_BUTTONS = 4;
 	static Button buttons[MAX_BUTTONS];
-	static std::string buttonNames[MAX_BUTTONS] = { "Play", "How to play", "Credits", "Exit" };
+	static std::string buttonNames[MAX_BUTTONS] = { "PLAY", "GUIDE", "CREDITS", "EXIT" };
 
 	void Init()
 	{
@@ -40,7 +40,7 @@ namespace MainMenu
 		{
 			double y = SCREEN_HEIGHT - marginBottom - (btnHeight + marginBetween) * (i + 1);
 
-			buttons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, buttonNames[MAX_BUTTONS - 1 - i]);
+			buttons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, buttonNames[i]);
 		}
 	}
 

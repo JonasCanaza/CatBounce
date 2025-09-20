@@ -10,7 +10,9 @@ namespace CatBounce
 {
 	Scenes currentScene = Scenes::MainMenu;
 	bool isRunning = true;
-	int font;
+
+	int normalFont;
+	int specialFont;
 
 	int normalBallTexture;
 
@@ -42,8 +44,11 @@ namespace CatBounce
 		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
 		normalBallTexture = slLoadTexture("res/images/normalBall.png");
 		normalFishTexture = slLoadTexture("res/images/normalFish.png");
-		font = slLoadFont("res/fonts/Roboto.ttf");
-		slSetFont(font, 24);
+
+		normalFont = slLoadFont("res/fonts/Roboto.ttf");
+		specialFont = slLoadFont("res/fonts/pusab/PUSAB___.ttf");
+
+		slSetFont(normalFont, 24);
 
 		MainMenu::Init();
 		Gameplay::Init();
