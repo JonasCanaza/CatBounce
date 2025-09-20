@@ -7,8 +7,11 @@
 
 namespace MainMenu
 {
+	static int logo;
+	static int mainMenuBackground;
+	static int mainMenuMusic;
+
 	static Background bgOne;
-	static int mainMenuBackground = 0;
 	static const int MAX_BUTTONS = 4;
 	static Button buttons[MAX_BUTTONS];
 	static std::string buttonNames[MAX_BUTTONS] = { "Play", "How to play", "Credits", "Exit" };
@@ -22,7 +25,11 @@ namespace MainMenu
 		bgOne.speedX = 0.2;
 		bgOne.speedY = -0.2;
 
+		logo = slLoadTexture("res/images/logo.png");
 		mainMenuBackground = slLoadTexture("res/images/mainMenuBackground.png");
+		mainMenuMusic = slLoadWAV("res/music/mainMenuMusic.wav");
+
+		slSoundPlay(slSoundLooping(mainMenuMusic));
 
 		double btnWidth = 250.0;
 		double btnHeight = 75.0;
@@ -107,6 +114,8 @@ namespace MainMenu
 		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y - bgOne.height, bgOne.width, bgOne.height);
 		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
 		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
+
+		slSprite(logo, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0 + 200, 450, 350);
 
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
