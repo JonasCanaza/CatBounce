@@ -14,9 +14,6 @@ struct Button
     double height;
     double x;
     double y;
-    int normalTexture;
-    int hoverTexture;
-    int pressedTexture;
     std::string text;
     ButtonState state;
     bool clicked;

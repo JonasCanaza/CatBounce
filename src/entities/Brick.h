@@ -1,6 +1,7 @@
 #pragma once
 
-const int MAX_BRICKS = 5;
+const int MAX_COL_BRICKS = 7;
+const int MAX_ROW_BRICKS = 5;
 
 struct Brick
 {
@@ -12,5 +13,5 @@ struct Brick
 	bool isActive;
 };
 
-void InitBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS]);
-void DrawBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS]);
+void InitBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
+void DrawBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);

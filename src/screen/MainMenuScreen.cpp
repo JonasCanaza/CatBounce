@@ -7,12 +7,23 @@
 
 namespace MainMenu
 {
+	static Background bgOne;
+	static int mainMenuBackground = 0;
 	static const int MAX_BUTTONS = 4;
 	static Button buttons[MAX_BUTTONS];
 	static std::string buttonNames[MAX_BUTTONS] = { "Play", "How to play", "Credits", "Exit" };
 
 	void Init()
 	{
+		bgOne.width = SCREEN_WIDTH;
+		bgOne.height = SCREEN_HEIGHT;
+		bgOne.x = SCREEN_WIDTH / 2.0;
+		bgOne.y = SCREEN_HEIGHT / 2.0;
+		bgOne.speedX = 0.2;
+		bgOne.speedY = -0.2;
+
+		mainMenuBackground = slLoadTexture("res/images/mainMenuBackground.png");
+
 		double btnWidth = 250.0;
 		double btnHeight = 75.0;
 		double marginBetween = 10.0;
@@ -59,12 +70,44 @@ namespace MainMenu
 		{
 			CatBounce::isRunning = false;
 		}
+
+		bgOne.x += bgOne.speedX;
+		bgOne.y += bgOne.speedY;
+
+		if (bgOne.x >= SCREEN_WIDTH / 2.0 + bgOne.width)
+		{
+			bgOne.x -= bgOne.width;
+		}
+		if (bgOne.x <= SCREEN_WIDTH / 2.0 - bgOne.width)
+		{
+			bgOne.x += bgOne.width;
+		}
+
+		if (bgOne.y >= SCREEN_HEIGHT / 2.0 + bgOne.height)
+		{
+			bgOne.y -= bgOne.height;
+		}
+		if (bgOne.y <= SCREEN_HEIGHT / 2.0 - bgOne.height)
+		{
+			bgOne.y += bgOne.height;
+		}
 	}
-	
+
 	void Draw()
 	{
 		slSetBackColor(0.0, 0.0, 0.0);
-		
+		slSprite(mainMenuBackground, bgOne.x, bgOne.y, bgOne.width, bgOne.height);
+
+		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x, bgOne.y - bgOne.height, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
+
+		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y - bgOne.height, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y - bgOne.height, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
+		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
+
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
 			DrawButton(buttons[i]);

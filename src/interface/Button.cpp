@@ -1,5 +1,6 @@
 #include "Button.h"
 #include "sl.h"
+#include "../Game.h"
 
 Button CreateButton(double x, double y, double width, double height, std::string text)
 {
@@ -9,9 +10,6 @@ Button CreateButton(double x, double y, double width, double height, std::string
     button.y = y - height / 2.0;
     button.width = width;
     button.height = height;
-    button.normalTexture = 0;
-    button.hoverTexture = 0;
-    button.pressedTexture = 0;
     button.text = text;
     button.state = ButtonState::Normal;
     button.clicked = false;
@@ -53,20 +51,17 @@ void DrawButton(Button button)
     {
     case ButtonState::Normal:
 
-        textureToUse = button.normalTexture;
-        slSetForeColor(1, 1, 1, 1);
+        textureToUse = CatBounce::normalButtonTexture;
 
         break;
     case ButtonState::Hover:
 
-        textureToUse = button.hoverTexture;
-        slSetForeColor(0.5, 0.5, 0.5, 1);
+        textureToUse = CatBounce::hoverButtonTexture;
 
         break;
     case ButtonState::Pressed:
 
-        textureToUse = button.pressedTexture;
-        slSetForeColor(0.2, 0.2, 0.2, 1);
+        textureToUse = CatBounce::pressedButtonTexture;
 
         break;
     default:
@@ -76,8 +71,7 @@ void DrawButton(Button button)
         break;
     }
 
-    slRectangleFill(button.x, button.y, button.width, button.height);
-    //slSprite(textureToUse, button.x, button.y, button.width, button.height);
+    slSprite(textureToUse, button.x, button.y, button.width, button.height);
 }
 
 bool IsMouseOverButton(Button button)

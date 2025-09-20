@@ -8,15 +8,21 @@
 
 namespace CatBounce
 {
-	Scenes currentScene = Scenes::Gameplay;
+	Scenes currentScene = Scenes::MainMenu;
 	bool isRunning = true;
 	int font;
+
+	int normalBallTexture;
+
+	int normalFishTexture;
+
+	int normalButtonTexture;
+	int hoverButtonTexture;
+	int pressedButtonTexture;
 
 	void Game()
 	{
 		slWindow(SCREEN_WIDTH, SCREEN_HEIGHT, PROGRAM_NAME.c_str(), false);
-		font = slLoadFont("res/fonts/Roboto.ttf");
-		slSetFont(font, 24);
 		Init();
 
 		while (!slShouldClose() && isRunning)
@@ -31,6 +37,14 @@ namespace CatBounce
 
 	void Init()
 	{
+		normalButtonTexture = slLoadTexture("res/images/normalButton.png");
+		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
+		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
+		normalBallTexture = slLoadTexture("res/images/normalBall.png");
+		normalFishTexture = slLoadTexture("res/images/normalFish.png");
+		font = slLoadFont("res/fonts/Roboto.ttf");
+		slSetFont(font, 24);
+
 		MainMenu::Init();
 		Gameplay::Init();
 		HowToPlay::Init();

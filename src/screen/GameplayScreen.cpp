@@ -14,7 +14,7 @@ namespace Gameplay
 {
 	static Pallette pall;
 	static Ball ball;
-	static Brick bricks[MAX_BRICKS][MAX_BRICKS];
+	static Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
 	static bool pause;
 	static bool allBricksDestroyed = false;
 	static double deltaTime;
@@ -22,7 +22,7 @@ namespace Gameplay
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
-	static bool ThereBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS]);
+	static bool ThereBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
 	static bool IsPlayerAlive(Pallette pall);
 	static void PrintScreenWinner();
 	static void ResetBall();
@@ -33,6 +33,7 @@ namespace Gameplay
 		pall.height = 30.0;
 		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
+		pall.speed = 600.0;
 		pall.speed = 600.0;
 		pall.lives = 3;
 
@@ -121,9 +122,9 @@ namespace Gameplay
 				ball.speedX *= -1.0;
 			}
 
-			if (ball.y + ball.radius > SCREEN_HEIGHT)
+			if (ball.y + ball.radius > MAXIMUM_TOP_Y)
 			{
-				ball.y = SCREEN_HEIGHT - ball.radius;
+				ball.y = MAXIMUM_TOP_Y - ball.radius;
 				ball.speedY *= -1.0;
 			}
 			if (ball.y + ball.radius < 0)
@@ -133,9 +134,9 @@ namespace Gameplay
 				ResetBall();
 			}
 
-			for (int row = 0; row < MAX_BRICKS; row++)
+			for (int row = 0; row < MAX_ROW_BRICKS; row++)
 			{
-				for (int col = 0; col < MAX_BRICKS; col++)
+				for (int col = 0; col < MAX_COL_BRICKS; col++)
 				{
 					if (bricks[row][col].isActive && CheckCollisionBallBrick(ball, bricks[row][col]))
 					{
@@ -213,9 +214,8 @@ namespace Gameplay
 		slSetForeColor(0.0, 0.0, 1.0, 1.0);
 		slRectangleOutline(pall.x, pall.y, pall.width, pall.height);
 
-
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		slCircleFill(ball.x, ball.y, ball.radius, 200);
+		slSprite(CatBounce::normalBallTexture, ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
 
 		slSetForeColor(1.0, 0.0, 0.0, 1.0);
 		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
@@ -277,11 +277,11 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool ThereBricks(Brick bricks[MAX_BRICKS][MAX_BRICKS])
+	static bool ThereBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
 	{
-		for (int row = 0; row < MAX_BRICKS; row++)
+		for (int row = 0; row < MAX_ROW_BRICKS; row++)
 		{	
-			for (int col = 0; col < MAX_BRICKS; col++)
+			for (int col = 0; col < MAX_COL_BRICKS; col++)
 			{
 				if (bricks[row][col].isActive)
 				{
