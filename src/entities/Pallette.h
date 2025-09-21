@@ -8,4 +8,5 @@ struct Pallette
 	double y;
 	double speed;
 	int lives;
+	int score;
 };

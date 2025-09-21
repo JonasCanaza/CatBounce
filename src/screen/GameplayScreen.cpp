@@ -12,6 +12,8 @@
 
 namespace Gameplay
 {
+	static int gameplayBackground;
+	static int gameplayHUD;
 	static int normalPalletteTexture;
 
 	static Pallette pall;
@@ -32,6 +34,8 @@ namespace Gameplay
 
 	void Init()
 	{
+		gameplayBackground = slLoadTexture("res/images/gameplayBackground.png");
+		gameplayHUD = slLoadTexture("res/images/gameplayHUD.png");
 		normalPalletteTexture = slLoadTexture("res/images/normalPallette.png");
 
 		pall.width = 100.0;
@@ -41,6 +45,7 @@ namespace Gameplay
 		pall.speed = 600.0;
 		pall.speed = 600.0;
 		pall.lives = 30;
+		pall.score = 0;
 
 		ball.radius = 15.0;
 		ball.x = SCREEN_WIDTH / 2.0;
@@ -172,6 +177,7 @@ namespace Gameplay
 				{
 					if (bricks[row][col].isActive && CheckCollisionBallBrick(ball, bricks[row][col]))
 					{
+						pall.score += 100;
 						bricks[row][col].isActive = false;
 						ball.speedY *= -1.0;
 					}
@@ -260,6 +266,7 @@ namespace Gameplay
 	{
 		slSetBackColor(0.0, 0.0, 0.0);
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
+		slSprite(gameplayBackground, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		DrawBricks(bricks);
 
@@ -274,8 +281,19 @@ namespace Gameplay
 		slSetForeColor(1.0, 0.0, 0.0, 1.0);
 		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
 
-		std::string textLive = "Live " + std::to_string(pall.lives);
-		slText(300, 100, textLive.c_str());
+		slSetForeColor(1.0, 1.0, 1.0, 1.0);
+		slSprite(gameplayHUD, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT - 50.0, SCREEN_WIDTH, 100.0);
+
+		slSetFont(CatBounce::specialFont, 40);
+
+		std::string textLives = "Lives: " + std::to_string(pall.lives);
+		double livesHeight = slGetTextHeight(textLives.c_str());
+		slText(50, SCREEN_HEIGHT - 50.0 - livesHeight / 2.0, textLives.c_str());
+
+		std::string textScore = "Score: " + std::to_string(pall.score);
+		double scoreWidth = slGetTextWidth(textScore.c_str());
+		double scoreHeight = slGetTextHeight(textScore.c_str());
+		slText(SCREEN_WIDTH - scoreWidth - 50, SCREEN_HEIGHT - 50.0 - scoreHeight / 2.0, textScore.c_str());
 
 		if (!ThereBricks(bricks))
 		{

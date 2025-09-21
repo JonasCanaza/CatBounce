@@ -14,7 +14,7 @@ namespace CatBounce
 	int normalFont;
 	int specialFont;
 
-	int normalBallTexture;
+	int normalBallTexture;	
 
 	int normalFishTexture;
 
@@ -48,7 +48,7 @@ namespace CatBounce
 		normalFont = slLoadFont("res/fonts/Roboto.ttf");
 		specialFont = slLoadFont("res/fonts/pusab/PUSAB___.ttf");
 
-		slSetFont(normalFont, 24);
+		slSetFont(specialFont, 24);
 
 		MainMenu::Init();
 		Gameplay::Init();
