@@ -12,6 +12,9 @@ namespace MainMenu
 		double speedY;
 	};
 
+	extern int mainMenuMusic;
+	extern int mainMenuMusicLoop;
+
 	void Init();
 	void Input();
 	void Update();

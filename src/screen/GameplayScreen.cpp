@@ -4,14 +4,18 @@
 #include "../entities/Brick.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
-#include "sl.h"
+#include "MainMenuScreen.h"
 
+#include "sl.h"
 #include <string>
 #include <cmath>
 #include <iostream>
 
 namespace Gameplay
 {
+	int gameplayMusic;
+	int gameplayMusicLoop;
+
 	static int gameplayBackground;
 	static int gameplayHUD;
 	static int normalPalletteTexture;
@@ -34,6 +38,7 @@ namespace Gameplay
 
 	void Init()
 	{
+		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
 		gameplayBackground = slLoadTexture("res/images/gameplayBackground.png");
 		gameplayHUD = slLoadTexture("res/images/gameplayHUD.png");
 		normalPalletteTexture = slLoadTexture("res/images/normalPallette.png");
@@ -63,8 +68,12 @@ namespace Gameplay
 	{
 		if (!pause)
 		{
-			if (slGetKey(SL_KEY_ESCAPE))
+			UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
+
+			if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 			{
+				slSoundStop(gameplayMusicLoop);
+				MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
 				CatBounce::currentScene = CatBounce::Scenes::MainMenu;
 			}
 

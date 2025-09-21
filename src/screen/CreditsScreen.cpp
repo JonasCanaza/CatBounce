@@ -1,7 +1,8 @@
 #include "CreditsScreen.h"
-#include "sl.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
+
+#include "sl.h"
 
 namespace Credits
 {
@@ -12,7 +13,9 @@ namespace Credits
 
 	void Input()
 	{
-		if (slGetKey(SL_KEY_ESCAPE))
+		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
+
+		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 		{
 			CatBounce::currentScene = CatBounce::Scenes::MainMenu;
 		}

@@ -150,6 +150,7 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
   <ItemGroup>
     <ClCompile Include="src\entities\Brick.cpp" />
     <ClCompile Include="src\Game.cpp" />
+    <ClCompile Include="src\input\InputSystem.cpp" />
     <ClCompile Include="src\interface\Button.cpp" />
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\screen\CreditsScreen.cpp" />
@@ -162,6 +163,7 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
     <ClInclude Include="src\entities\Brick.h" />
     <ClInclude Include="src\entities\Pallette.h" />
     <ClInclude Include="src\Game.h" />
+    <ClInclude Include="src\input\InputSystem.h" />
     <ClInclude Include="src\interface\Button.h" />
     <ClInclude Include="src\screen\CreditsScreen.h" />
     <ClInclude Include="src\screen\GameplayScreen.h" />

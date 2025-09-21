@@ -1,15 +1,17 @@
 #include "Game.h"
-#include "sl.h"
-#include "utilities/Constants.h"
 #include "screen/MainMenuScreen.h"
 #include "screen/GameplayScreen.h"
 #include "screen/HowToPlayScreen.h"
 #include "screen//CreditsScreen.h"
+#include "utilities/Constants.h"
+
+#include "sl.h"
 
 namespace CatBounce
 {
-	Scenes currentScene = Scenes::Gameplay;
+	Scenes currentScene = Scenes::MainMenu;
 	bool isRunning = true;
+	KeyTracker inputSystem;
 
 	int normalFont;
 	int specialFont;
@@ -39,6 +41,8 @@ namespace CatBounce
 
 	void Init()
 	{
+		InitKey(inputSystem);
+
 		normalButtonTexture = slLoadTexture("res/images/normalButton.png");
 		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
 		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");

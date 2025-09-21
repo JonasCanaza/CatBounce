@@ -2,6 +2,8 @@
 #include "../interface/Button.h"
 #include "../Game.h"
 #include "../utilities/Constants.h"
+#include "GameplayScreen.h"
+
 #include <iostream>
 #include "sl.h"
 
@@ -9,7 +11,8 @@ namespace MainMenu
 {
 	static int logo;
 	static int mainMenuBackground;
-	static int mainMenuMusic;
+	int mainMenuMusic;
+	int mainMenuMusicLoop;
 
 	static Background bgOne;
 	static const int MAX_BUTTONS = 4;
@@ -29,7 +32,7 @@ namespace MainMenu
 		mainMenuBackground = slLoadTexture("res/images/mainMenuBackground.png");
 		mainMenuMusic = slLoadWAV("res/music/mainMenuMusic.wav");
 
-		slSoundPlay(slSoundLooping(mainMenuMusic));
+		mainMenuMusicLoop = slSoundLoop(mainMenuMusic);
 
 		double btnWidth = 250.0;
 		double btnHeight = 75.0;
@@ -46,9 +49,11 @@ namespace MainMenu
 
 	void Input()
 	{
-		if (slGetKey(SL_KEY_ESCAPE))
+		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
+
+		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 		{
-			CatBounce::isRunning = false;
+			std::cout << "Menu" << std::endl;
 		}
 	}
 
@@ -64,6 +69,8 @@ namespace MainMenu
 		if (buttons[0].clicked)
 		{
 			CatBounce::currentScene = CatBounce::Scenes::Gameplay;
+			slSoundStop(mainMenuMusicLoop);
+			Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 		}
 		if (buttons[1].clicked)
 		{
@@ -99,7 +106,7 @@ namespace MainMenu
 			bgOne.y += bgOne.height;
 		}
 	}
-
+	
 	void Draw()
 	{
 		slSetBackColor(0.0, 0.0, 0.0);
