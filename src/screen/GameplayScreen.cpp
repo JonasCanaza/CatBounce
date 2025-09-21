@@ -47,8 +47,7 @@ namespace Gameplay
 		pall.height = 50.0;
 		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
-		pall.speed = 600.0;
-		pall.speed = 600.0;
+		pall.speed = 700.0;
 		pall.lives = 30;
 		pall.score = 0;
 
@@ -56,27 +55,37 @@ namespace Gameplay
 		ball.x = SCREEN_WIDTH / 2.0;
 		ball.y = SCREEN_HEIGHT / 2.0;
 		ball.speedX = 300.0;
-		ball.speedY = 375.0;
+		ball.speedY = 325.0;
 		ball.isActive = false;
 
 		InitBricks(bricks);
+		InitBall();
 
 		pause = false;
 	}
 
 	void Input()
 	{
+		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
+
+		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
+		{
+			//MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
+			//CatBounce::currentScene = CatBounce::Scenes::MainMenu;
+			pause = !pause;
+
+			if (pause)
+			{
+				slSoundPause(gameplayMusicLoop);
+			}
+			else
+			{
+				slSoundResumeAll();
+			}
+		}
+
 		if (!pause)
 		{
-			UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
-
-			if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
-			{
-				slSoundStop(gameplayMusicLoop);
-				MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
-				CatBounce::currentScene = CatBounce::Scenes::MainMenu;
-			}
-
 			if (slGetKey('a') || slGetKey('A'))
 			{
 				pall.x -= pall.speed * deltaTime;
@@ -88,17 +97,7 @@ namespace Gameplay
 			}
 		}
 
-		// TEST!!!
 		if (slGetKey(' '))
-		{
-			pause = true;
-		}
-		else
-		{
-			pause = false;
-		}
-
-		if (slGetKey('E'))
 		{
 			ball.isActive = true;
 		}
@@ -139,6 +138,7 @@ namespace Gameplay
 				ball.x = pall.x;
 				ball.y = pall.y + pall.height + ball.radius;
 
+				//BALL TEST!!!
 				//if (slGetKey(SL_KEY_UP))
 				//{
 				//	ball.y += 300 * deltaTime;
@@ -161,17 +161,20 @@ namespace Gameplay
 			{
 				ball.x = ball.radius;
 				ball.speedX *= -1.0;
+				PlayImpactSound();
 			}
 			if (ball.x + ball.radius > SCREEN_WIDTH)
 			{
 				ball.x = SCREEN_WIDTH - ball.radius;
 				ball.speedX *= -1.0;
+				PlayImpactSound();
 			}
 
 			if (ball.y + ball.radius > MAXIMUM_TOP_Y)
 			{
 				ball.y = MAXIMUM_TOP_Y - ball.radius;
 				ball.speedY *= -1.0;
+				PlayImpactSound();
 			}
 			if (ball.y + ball.radius < 0)
 			{
@@ -186,9 +189,86 @@ namespace Gameplay
 				{
 					if (bricks[row][col].isActive && CheckCollisionBallBrick(ball, bricks[row][col]))
 					{
+						double deltaX = ball.x - bricks[row][col].x;
+						double deltaY = ball.y - bricks[row][col].y;
+
+						double overlapHorizontal = (bricks[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
+						double overlapVertical = (bricks[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
+
+						if (overlapHorizontal < overlapVertical)
+						{
+							if (deltaX < 0) // LEFT
+							{
+								ball.x = bricks[row][col].x - bricks[row][col].width / 2.0 - ball.radius - 0.1;
+								ball.speedX = -fabs(ball.speedX);
+
+								if (ball.y > bricks[row][col].y)
+								{
+									//std::cout << "LEFT TOP collision" << std::endl;
+									ball.speedY = fabs(ball.speedY);
+								}
+								else
+								{
+									//std::cout << "LEFT BOTTOM collision" << std::endl;
+									ball.speedY = -fabs(ball.speedY);
+								}
+							}
+							else // RIGHT
+							{
+								ball.x = bricks[row][col].x + bricks[row][col].width / 2.0 + ball.radius + 0.1;
+								ball.speedX = fabs(ball.speedX);
+
+								if (ball.y > bricks[row][col].y)
+								{
+									//std::cout << "RIGHT TOP collision" << std::endl;
+									ball.speedY = fabs(ball.speedY);
+								}
+								else
+								{
+									//std::cout << "RIGHT BOTTOM collision" << std::endl;
+									ball.speedY = -fabs(ball.speedY);
+								}
+							}
+						}
+						else
+						{
+							if (deltaY > 0) // TOP
+							{
+								ball.y = bricks[row][col].y + bricks[row][col].height / 2.0 + ball.radius + 0.1;
+								ball.speedY = fabs(ball.speedY);
+								
+								if (ball.x < bricks[row][col].x)
+								{
+									//std::cout << "TOP LEFT collision" << std::endl;
+									ball.speedX = -fabs(ball.speedX);
+								}
+								else
+								{
+									//std::cout << "TOP RIGHT collision" << std::endl;
+									ball.speedX = fabs(ball.speedX);
+								}
+							}
+							else // BOTTOM
+							{
+								ball.y = bricks[row][col].y - bricks[row][col].height / 2.0 - ball.radius - 0.1;
+								ball.speedY = -fabs(ball.speedY);
+
+								if (ball.x < bricks[row][col].x)
+								{
+									//std::cout << "BOTTOM LEFT collision" << std::endl;
+									ball.speedX = -fabs(ball.speedX);
+								}
+								else
+								{
+									//std::cout << "BOTTOM RIGHT collision" << std::endl;
+									ball.speedX = fabs(ball.speedX);
+								}
+							}
+						}
+
 						pall.score += 100;
 						bricks[row][col].isActive = false;
-						ball.speedY *= -1.0;
+						PlayImpactSound();
 					}
 				}
 			}
@@ -256,18 +336,12 @@ namespace Gameplay
 				double maxDeviation = 400.0;
 				ball.speedX = maxDeviation * relativeImpact;
 
-				collisionCooldown = 0.5;
+				collisionCooldown = 0.75;
+
+				PlayImpactSound();
 			}
 
-			if (!IsPlayerAlive(pall))
-			{
-				std::cout << "Loser!!!";
-			}
-
-			if (!ThereBricks(bricks))
-			{
-				std::cout << "Winner!!!";
-			}
+			//std::cout << "X: " << ball.speedX << "               Y: " << ball.speedY << std::endl;
 		}
 	}
 

@@ -9,3 +9,6 @@ struct Ball
 	double speedY;
 	bool isActive;
 };
+
+void InitBall();
+void PlayImpactSound();
