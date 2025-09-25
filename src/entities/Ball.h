@@ -1,5 +1,7 @@
 #pragma once
 
+const int MAX_BALL_HITS = 4;
+
 struct Ball
 {
 	double radius;

@@ -1,6 +1,8 @@
 #include "Ball.h"
 
 #include "sl.h"
+#include <ctime>
+#include <stdlib.h>
 
 static int ballHitSound1;
 static int ballHitSound2;
@@ -17,5 +19,32 @@ void InitBall()
 
 void PlayImpactSound()
 {
-	slSoundPlay(ballHitSound1);
+	switch (rand() % MAX_BALL_HITS)
+	{
+	case 0:
+
+		slSoundPlay(ballHitSound1);
+
+		break;
+	case 1:
+
+		slSoundPlay(ballHitSound2);
+
+		break;
+	case 2:
+
+		slSoundPlay(ballHitSound3);
+
+		break;
+	case 3:
+
+		slSoundPlay(ballHitSound4);
+
+		break;
+	default:
+
+		// NO MORE KNOCKING SOUNDS
+
+		break;
+	}
 }

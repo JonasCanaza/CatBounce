@@ -18,6 +18,8 @@ namespace CatBounce
 	extern int normalFont;
 	extern int specialFont;
 
+	extern int buttonPressed;
+
 	extern int normalBallTexture;
 
 	extern int normalFishTexture;

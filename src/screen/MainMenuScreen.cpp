@@ -17,7 +17,7 @@ namespace MainMenu
 	static Background bgOne;
 	static const int MAX_BUTTONS = 4;
 	static Button buttons[MAX_BUTTONS];
-	static std::string buttonNames[MAX_BUTTONS] = { "PLAY", "GUIDE", "CREDITS", "EXIT" };
+	static std::string buttonNames[MAX_BUTTONS] = { "PLAY", "RULES", "CREDITS", "EXIT" };
 
 	void Init()
 	{
@@ -59,8 +59,6 @@ namespace MainMenu
 
 	void Update()
 	{
-		//std::cout << "X: " << slGetMouseX() << "          Y: " << slGetMouseY() << std::endl;
-
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
 			UpdateButton(buttons[i]);
@@ -69,16 +67,19 @@ namespace MainMenu
 		if (buttons[0].clicked)
 		{
 			CatBounce::currentScene = CatBounce::Scenes::Gameplay;
+			slSoundPlay(CatBounce::buttonPressed);
 			slSoundStop(mainMenuMusicLoop);
 			Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 		}
 		if (buttons[1].clicked)
 		{
 			CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
+			slSoundPlay(CatBounce::buttonPressed);
 		}
 		if (buttons[2].clicked)
 		{
 			CatBounce::currentScene = CatBounce::Scenes::Credits;
+			slSoundPlay(CatBounce::buttonPressed);	
 		}
 		if (buttons[3].clicked)
 		{

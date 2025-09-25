@@ -5,6 +5,7 @@
 #include "../utilities/Constants.h"
 #include "../Game.h"
 #include "MainMenuScreen.h"
+#include "../interface/Button.h"
 
 #include "sl.h"
 #include <string>
@@ -28,6 +29,10 @@ namespace Gameplay
 	static double deltaTime;
 	static double collisionCooldown = 0.0;
 
+	static const int MAX_PAUSE_BUTTONS = 3;
+	static Button pauseButtons[MAX_PAUSE_BUTTONS];
+	static std::string pauseButtonNames[MAX_PAUSE_BUTTONS] = { "RESUME", "RESTART", "EXIT" };
+
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
@@ -35,6 +40,9 @@ namespace Gameplay
 	static bool IsPlayerAlive(Pallette pall);
 	static void PrintScreenWinner();
 	static void ResetBall();
+	static void InitPauseMenu();
+	static void DrawMenuPause();
+	static void UpdateMenuPause();
 
 	void Init()
 	{
@@ -61,6 +69,8 @@ namespace Gameplay
 		InitBricks(bricks);
 		InitBall();
 
+		InitPauseMenu();
+
 		pause = false;
 	}
 
@@ -70,8 +80,6 @@ namespace Gameplay
 
 		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 		{
-			//MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
-			//CatBounce::currentScene = CatBounce::Scenes::MainMenu;
 			pause = !pause;
 
 			if (pause)
@@ -340,8 +348,10 @@ namespace Gameplay
 
 				PlayImpactSound();
 			}
-
-			//std::cout << "X: " << ball.speedX << "               Y: " << ball.speedY << std::endl;
+		}
+		else
+		{
+			UpdateMenuPause();
 		}
 	}
 
@@ -377,6 +387,11 @@ namespace Gameplay
 		double scoreWidth = slGetTextWidth(textScore.c_str());
 		double scoreHeight = slGetTextHeight(textScore.c_str());
 		slText(SCREEN_WIDTH - scoreWidth - 50, SCREEN_HEIGHT - 50.0 - scoreHeight / 2.0, textScore.c_str());
+
+		if (pause)
+		{
+			DrawMenuPause();
+		}
 
 		if (!ThereBricks(bricks))
 		{
@@ -470,5 +485,70 @@ namespace Gameplay
 	{
 
 		ball.isActive = false;
+	}
+
+	static void InitPauseMenu()
+	{
+		double btnWidth = 250.0;
+		double btnHeight = 75.0;
+		double marginBetween = 10.0;
+		double marginBottom = 300.0;
+
+		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
+		{
+			double y = SCREEN_HEIGHT - marginBottom - (btnHeight + marginBetween) * (i + 1);
+
+			pauseButtons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, pauseButtonNames[i]);
+		}
+	}
+
+	static void DrawMenuPause()
+	{
+		slSetForeColor(0.0, 0.0, 0.0, 0.8);
+		slRectangleFill(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		slSetForeColor(1.0, 1.0, 1.0, 1.0);
+		slSetFont(CatBounce::specialFont, 50);
+		double textWidth = slGetTextWidth("PAUSED");
+		slText(SCREEN_WIDTH / 2.0 - textWidth / 2.0, SCREEN_HEIGHT / 2.0 + 180, "PAUSED");
+
+		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
+		{
+			DrawButton(pauseButtons[i]);
+		}
+	}
+
+	static void UpdateMenuPause()
+	{
+		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
+		{
+			UpdateButton(pauseButtons[i]);
+
+			if (pauseButtons[i].clicked)
+			{
+				if (pauseButtonNames[i] == "RESUME")
+				{
+					slSoundPlay(CatBounce::buttonPressed);
+					pause = false;
+					slSoundResumeAll();
+				}
+				else if (pauseButtonNames[i] == "RESTART")
+				{
+					slSoundPlay(CatBounce::buttonPressed);
+					InitBricks(bricks);
+					pall.lives = 3;
+					pall.score = 0;
+					pause = false;
+					slSoundResumeAll();
+				}
+				else if (pauseButtonNames[i] == "EXIT")
+				{
+					slSoundPlay(CatBounce::buttonPressed);
+					slSoundStop(gameplayMusicLoop);
+					MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
+					CatBounce::currentScene = CatBounce::Scenes::MainMenu;
+				}
+			}
+		}
 	}
 }

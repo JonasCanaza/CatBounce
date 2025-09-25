@@ -6,6 +6,7 @@
 #include "utilities/Constants.h"
 
 #include "sl.h"
+#include <ctime>
 
 namespace CatBounce
 {
@@ -15,6 +16,8 @@ namespace CatBounce
 
 	int normalFont;
 	int specialFont;
+
+	int buttonPressed;
 
 	int normalBallTexture;	
 
@@ -26,6 +29,7 @@ namespace CatBounce
 
 	void Game()
 	{
+		srand(time(0));
 		slWindow(SCREEN_WIDTH, SCREEN_HEIGHT, PROGRAM_NAME.c_str(), false);
 		Init();
 
@@ -43,6 +47,7 @@ namespace CatBounce
 	{
 		InitKey(inputSystem);
 
+		buttonPressed = slLoadWAV("res/sound/buttonPressed.wav");
 		normalButtonTexture = slLoadTexture("res/images/normalButton.png");
 		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
 		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
