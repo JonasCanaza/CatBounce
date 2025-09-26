@@ -19,7 +19,10 @@ namespace CatBounce
 
 	int buttonPressed;
 
-	int normalBallTexture;	
+	int normalBallTexture;
+	int fireFishTexture;
+	int speedFishTexture;
+	int slownessFishTexture;
 
 	int normalFishTexture;
 
@@ -52,7 +55,15 @@ namespace CatBounce
 		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
 		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
 		normalBallTexture = slLoadTexture("res/images/normalBall.png");
+
+		// FISH
+
 		normalFishTexture = slLoadTexture("res/images/normalFish.png");
+		fireFishTexture = slLoadTexture("res/images/fireFish.png");
+		speedFishTexture = slLoadTexture("res/images/speedFish.png");
+		slownessFishTexture = slLoadTexture("res/images/slownessFish.png");
+
+		// TEXT
 
 		normalFont = slLoadFont("res/fonts/Roboto.ttf");
 		specialFont = slLoadFont("res/fonts/pusab/PUSAB___.ttf");

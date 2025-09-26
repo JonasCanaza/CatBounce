@@ -267,6 +267,32 @@ namespace Gameplay
 							}
 						}
 
+						switch (bricks[row][col].type)
+						{
+						case BrickType::Normal:
+
+							std::cout << "POP Fish normal" << std::endl;
+
+							break;
+						case BrickType::Fire:
+
+							std::cout << "POP Fish fire" << std::endl;
+
+							break;
+						case BrickType::Speed:
+
+							std::cout << "POP Fish speed" << std::endl;
+
+							break;
+						case BrickType::Slowness:
+
+							std::cout << "POP Fish slowness" << std::endl;
+
+							break;
+						default:
+							break;
+						}
+
 						pall.score += 100;
 						bricks[row][col].isActive = false;
 						PlayImpactSound();
@@ -292,11 +318,11 @@ namespace Gameplay
 						if (ball.y > pall.y)
 						{
 							ball.speedY *= -1.0;
-							std::cout << "Left TOP!" << std::endl;
+							//std::cout << "Left TOP!" << std::endl;
 						}
 						else
 						{
-							std::cout << "Left BUTTOM!" << std::endl;
+							//std::cout << "Left BUTTOM!" << std::endl;
 						}
 					}
 					else // RIGHT
@@ -307,11 +333,11 @@ namespace Gameplay
 						if (ball.y > pall.y)
 						{
 							ball.speedY *= -1.0;
-							std::cout << "Right TOP!" << std::endl;
+							//std::cout << "Right TOP!" << std::endl;
 						}
 						else
 						{
-							std::cout << "Right BUTTOM!" << std::endl;
+							//std::cout << "Right BUTTOM!" << std::endl;
 						}
 					}
 				}
@@ -319,7 +345,7 @@ namespace Gameplay
 				{
 					ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
 					ball.speedY *= -1.0;
-					std::cout << "Top!" << std::endl;
+					//std::cout << "Top!" << std::endl;
 				}
 
 				double relativeImpact = (ball.x - pall.x) / (pall.width / 2.0);
