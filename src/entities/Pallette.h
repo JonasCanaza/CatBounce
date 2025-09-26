@@ -9,4 +9,5 @@ struct Pallette
 	double speed;
 	int lives;
 	int score;
+	bool isWinner;
 };

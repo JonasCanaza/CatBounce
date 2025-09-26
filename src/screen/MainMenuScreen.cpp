@@ -3,6 +3,7 @@
 #include "../Game.h"
 #include "../utilities/Constants.h"
 #include "GameplayScreen.h"
+#include "../panel/ExitPanel.h"
 
 #include <iostream>
 #include "sl.h"
@@ -21,6 +22,8 @@ namespace MainMenu
 
 	void Init()
 	{
+		ExitPanel::Init();
+
 		bgOne.width = SCREEN_WIDTH;
 		bgOne.height = SCREEN_HEIGHT;
 		bgOne.x = SCREEN_WIDTH / 2.0;
@@ -53,37 +56,45 @@ namespace MainMenu
 
 		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 		{
-			std::cout << "Menu" << std::endl;
+			ExitPanel::isActive = !ExitPanel::isActive;
 		}
 	}
 
 	void Update()
 	{
-		for (int i = 0; i < MAX_BUTTONS; i++)
+		if (!ExitPanel::isActive)
 		{
-			UpdateButton(buttons[i]);
-		}
+			for (int i = 0; i < MAX_BUTTONS; i++)
+			{
+				UpdateButton(buttons[i]);
+			}
 
-		if (buttons[0].clicked)
-		{
-			CatBounce::currentScene = CatBounce::Scenes::Gameplay;
-			slSoundPlay(CatBounce::buttonPressed);
-			slSoundStop(mainMenuMusicLoop);
-			Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
+			if (buttons[0].clicked)
+			{
+				slSoundPlay(CatBounce::buttonPressed);
+				slSoundStop(mainMenuMusicLoop);
+				Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
+				CatBounce::currentScene = CatBounce::Scenes::Gameplay;
+			}
+			if (buttons[1].clicked)
+			{
+				slSoundPlay(CatBounce::buttonPressed);
+				CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
+			}
+			if (buttons[2].clicked)
+			{
+				slSoundPlay(CatBounce::buttonPressed);
+				CatBounce::currentScene = CatBounce::Scenes::Credits;
+			}
+			if (buttons[3].clicked)
+			{
+				slSoundPlay(CatBounce::buttonPressed);
+				ExitPanel::isActive = !ExitPanel::isActive;
+			}
 		}
-		if (buttons[1].clicked)
+		else
 		{
-			CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
-			slSoundPlay(CatBounce::buttonPressed);
-		}
-		if (buttons[2].clicked)
-		{
-			CatBounce::currentScene = CatBounce::Scenes::Credits;
-			slSoundPlay(CatBounce::buttonPressed);	
-		}
-		if (buttons[3].clicked)
-		{
-			CatBounce::isRunning = false;
+			ExitPanel::Update();
 		}
 
 		bgOne.x += bgOne.speedX;
@@ -128,6 +139,11 @@ namespace MainMenu
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
 			DrawButton(buttons[i]);
+		}
+
+		if (ExitPanel::isActive)
+		{
+			ExitPanel::Draw();
 		}
 
 		slRender();

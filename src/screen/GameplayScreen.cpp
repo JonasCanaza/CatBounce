@@ -4,8 +4,8 @@
 #include "../entities/Brick.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
-#include "MainMenuScreen.h"
-#include "../interface/Button.h"
+#include "../panel/PausePanel.h"
+#include "../panel/GameOverPanel.h"
 
 #include "sl.h"
 #include <string>
@@ -14,6 +14,7 @@
 
 namespace Gameplay
 {
+	bool isGameOver;
 	int gameplayMusic;
 	int gameplayMusicLoop;
 
@@ -21,31 +22,24 @@ namespace Gameplay
 	static int gameplayHUD;
 	static int normalPalletteTexture;
 
-	static Pallette pall;
-	static Ball ball;
-	static Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
-	static bool pause;
+	Pallette pall;
+	Ball ball;
+	Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
 	static bool allBricksDestroyed = false;
 	static double deltaTime;
 	static double collisionCooldown = 0.0;
 
-	static const int MAX_PAUSE_BUTTONS = 3;
-	static Button pauseButtons[MAX_PAUSE_BUTTONS];
-	static std::string pauseButtonNames[MAX_PAUSE_BUTTONS] = { "RESUME", "RESTART", "EXIT" };
-
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
-	static bool ThereBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
+	static bool HasActiveBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
 	static bool IsPlayerAlive(Pallette pall);
-	static void PrintScreenWinner();
 	static void ResetBall();
-	static void InitPauseMenu();
-	static void DrawMenuPause();
-	static void UpdateMenuPause();
 
 	void Init()
 	{
+		isGameOver = false;;
+
 		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
 		gameplayBackground = slLoadTexture("res/images/gameplayBackground.png");
 		gameplayHUD = slLoadTexture("res/images/gameplayHUD.png");
@@ -56,8 +50,9 @@ namespace Gameplay
 		pall.x = SCREEN_WIDTH / 2.0;
 		pall.y = pall.height;
 		pall.speed = 700.0;
-		pall.lives = 30;
+		pall.lives = 1;
 		pall.score = 0;
+		pall.isWinner = false;
 
 		ball.radius = 15.0;
 		ball.x = SCREEN_WIDTH / 2.0;
@@ -69,31 +64,22 @@ namespace Gameplay
 		InitBricks(bricks);
 		InitBall();
 
-		InitPauseMenu();
-
-		pause = false;
+		PausePanel::Init();
+		GameOverPanel::Init();
 	}
 
 	void Input()
 	{
-		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
-
-		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
+		if (!PausePanel::isActive && !isGameOver)
 		{
-			pause = !pause;
+			UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
 
-			if (pause)
+			if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 			{
 				slSoundPause(gameplayMusicLoop);
+				PausePanel::isActive = !PausePanel::isActive;
 			}
-			else
-			{
-				slSoundResumeAll();
-			}
-		}
 
-		if (!pause)
-		{
 			if (slGetKey('a') || slGetKey('A'))
 			{
 				pall.x -= pall.speed * deltaTime;
@@ -125,7 +111,7 @@ namespace Gameplay
 			}
 		}
 
-		if (!pause)
+		if (!PausePanel::isActive && !isGameOver)
 		{
 			if (pall.x - pall.width / 2.0 < 0)
 			{
@@ -189,6 +175,13 @@ namespace Gameplay
 				ball.speedY = std::abs(ball.speedY);
 				pall.lives--;
 				ResetBall();
+
+				if (pall.lives <= 0)
+				{
+					isGameOver = true;
+					GameOverPanel::isActive = true;
+					pall.isWinner = false;
+				}
 			}
 
 			for (int row = 0; row < MAX_ROW_BRICKS; row++)
@@ -348,10 +341,25 @@ namespace Gameplay
 
 				PlayImpactSound();
 			}
+
+			if (!HasActiveBricks(bricks))
+			{
+				isGameOver = true;
+				GameOverPanel::isActive = true;
+				pall.isWinner = true;
+			}
 		}
 		else
 		{
-			UpdateMenuPause();
+			if (PausePanel::isActive)
+			{
+				PausePanel::Update();
+			}
+
+			if (GameOverPanel::isActive)
+			{
+				GameOverPanel::Update();
+			}
 		}
 	}
 
@@ -388,14 +396,14 @@ namespace Gameplay
 		double scoreHeight = slGetTextHeight(textScore.c_str());
 		slText(SCREEN_WIDTH - scoreWidth - 50, SCREEN_HEIGHT - 50.0 - scoreHeight / 2.0, textScore.c_str());
 
-		if (pause)
+		if (PausePanel::isActive)
 		{
-			DrawMenuPause();
+			PausePanel::Draw();
 		}
 
-		if (!ThereBricks(bricks))
+		if (GameOverPanel::isActive)
 		{
-			PrintScreenWinner();
+			GameOverPanel::Draw();
 		}
 
 		slRender();
@@ -447,7 +455,7 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool ThereBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
+	static bool HasActiveBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
 	{
 		for (int row = 0; row < MAX_ROW_BRICKS; row++)
 		{	
@@ -473,82 +481,9 @@ namespace Gameplay
 		return true;
 	}
 
-	static void PrintScreenWinner()
-	{
-		slSetForeColor(0.0, 0.0, 0.0, 0.75);
-		slRectangleFill(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
-		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		slText(40.0, 40.0, "You win");
-	}
-
 	static void ResetBall()
 	{
 
 		ball.isActive = false;
-	}
-
-	static void InitPauseMenu()
-	{
-		double btnWidth = 250.0;
-		double btnHeight = 75.0;
-		double marginBetween = 10.0;
-		double marginBottom = 300.0;
-
-		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
-		{
-			double y = SCREEN_HEIGHT - marginBottom - (btnHeight + marginBetween) * (i + 1);
-
-			pauseButtons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, pauseButtonNames[i]);
-		}
-	}
-
-	static void DrawMenuPause()
-	{
-		slSetForeColor(0.0, 0.0, 0.0, 0.8);
-		slRectangleFill(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
-
-		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		slSetFont(CatBounce::specialFont, 50);
-		double textWidth = slGetTextWidth("PAUSED");
-		slText(SCREEN_WIDTH / 2.0 - textWidth / 2.0, SCREEN_HEIGHT / 2.0 + 180, "PAUSED");
-
-		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
-		{
-			DrawButton(pauseButtons[i]);
-		}
-	}
-
-	static void UpdateMenuPause()
-	{
-		for (int i = 0; i < MAX_PAUSE_BUTTONS; i++)
-		{
-			UpdateButton(pauseButtons[i]);
-
-			if (pauseButtons[i].clicked)
-			{
-				if (pauseButtonNames[i] == "RESUME")
-				{
-					slSoundPlay(CatBounce::buttonPressed);
-					pause = false;
-					slSoundResumeAll();
-				}
-				else if (pauseButtonNames[i] == "RESTART")
-				{
-					slSoundPlay(CatBounce::buttonPressed);
-					InitBricks(bricks);
-					pall.lives = 3;
-					pall.score = 0;
-					pause = false;
-					slSoundResumeAll();
-				}
-				else if (pauseButtonNames[i] == "EXIT")
-				{
-					slSoundPlay(CatBounce::buttonPressed);
-					slSoundStop(gameplayMusicLoop);
-					MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
-					CatBounce::currentScene = CatBounce::Scenes::MainMenu;
-				}
-			}
-		}
 	}
 }

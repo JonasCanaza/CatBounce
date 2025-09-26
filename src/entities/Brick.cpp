@@ -16,12 +16,15 @@ void InitBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
 	{
 		for (int col = 0; col < MAX_COL_BRICKS; col++)
 		{
-			bricks[row][col].width = brickWidth;
-			bricks[row][col].height = brickHeight;
-			bricks[row][col].x = offsetX + brickWidth / 2.0 + col * (brickWidth + spacing);
-			bricks[row][col].y = SCREEN_HEIGHT - (marginY + brickHeight / 2.0 + row * (brickHeight + spacing));
-			bricks[row][col].texture = 0;
-			bricks[row][col].isActive = true;
+			if (row == 4 && col == 3)
+			{
+				bricks[row][col].width = brickWidth;
+				bricks[row][col].height = brickHeight;
+				bricks[row][col].x = offsetX + brickWidth / 2.0 + col * (brickWidth + spacing);
+				bricks[row][col].y = SCREEN_HEIGHT - (marginY + brickHeight / 2.0 + row * (brickHeight + spacing));
+				bricks[row][col].texture = 0;
+				bricks[row][col].isActive = true;
+			}
 		}
 	}
 }
@@ -34,7 +37,6 @@ void DrawBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
 		{
 			if (bricks[row][col].isActive)
 			{
-				//slRectangleFill(bricks[row][col].x, bricks[row][col].y, bricks[row][col].width, bricks[row][col].height);
 				slSprite(CatBounce::normalFishTexture, bricks[row][col].x, bricks[row][col].y, bricks[row][col].width, bricks[row][col].height);
 
 			}
