@@ -13,6 +13,24 @@
       <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
       <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
     </Filter>
+    <Filter Include="Screen">
+      <UniqueIdentifier>{63e80f46-4f80-4829-a420-833bd1c28868}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Entities">
+      <UniqueIdentifier>{ebd53cbc-a0af-4a17-ab74-327c2aec96d4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Input">
+      <UniqueIdentifier>{40c3cec5-cb4b-443e-978d-7a96d142800c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Panel">
+      <UniqueIdentifier>{9b8729c4-19fb-4679-a0c7-5c85b0af5e97}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Interface">
+      <UniqueIdentifier>{afc32992-72ba-421d-a98d-1fbb4e83719c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Utilities">
+      <UniqueIdentifier>{32d47f6d-a2bc-47cb-95ca-a9ba8e8d0110}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="src\main.cpp">
@@ -21,82 +39,82 @@
     <ClCompile Include="src\Game.cpp">
       <Filter>Archivos de origen</Filter>
     </ClCompile>
-    <ClCompile Include="src\entities\Brick.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\screen\CreditsScreen.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\screen\GameplayScreen.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
     <ClCompile Include="src\screen\HowToPlayScreen.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Screen</Filter>
     </ClCompile>
     <ClCompile Include="src\screen\MainMenuScreen.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Screen</Filter>
     </ClCompile>
-    <ClCompile Include="src\interface\Button.cpp">
-      <Filter>Archivos de origen</Filter>
-    </ClCompile>
-    <ClCompile Include="src\input\InputSystem.cpp">
-      <Filter>Archivos de origen</Filter>
+    <ClCompile Include="src\screen\CreditsScreen.cpp">
+      <Filter>Screen</Filter>
     </ClCompile>
     <ClCompile Include="src\entities\Ball.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="src\panel\ExitPanel.cpp">
-      <Filter>Archivos de origen</Filter>
+    <ClCompile Include="src\entities\Brick.cpp">
+      <Filter>Entities</Filter>
     </ClCompile>
-    <ClCompile Include="src\panel\GameOverPanel.cpp">
-      <Filter>Archivos de origen</Filter>
+    <ClCompile Include="src\input\InputSystem.cpp">
+      <Filter>Input</Filter>
     </ClCompile>
     <ClCompile Include="src\panel\PausePanel.cpp">
-      <Filter>Archivos de origen</Filter>
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\panel\GameOverPanel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\panel\ExitPanel.cpp">
+      <Filter>Panel</Filter>
+    </ClCompile>
+    <ClCompile Include="src\screen\GameplayScreen.cpp">
+      <Filter>Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="src\interface\Button.cpp">
+      <Filter>Interface</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="src\entities\Pallette.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\entities\Ball.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
     <ClInclude Include="src\Game.h">
       <Filter>Archivos de encabezado</Filter>
     </ClInclude>
-    <ClInclude Include="src\utilities\Constants.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\entities\Brick.h">
-      <Filter>Archivos de encabezado</Filter>
-    </ClInclude>
-    <ClInclude Include="src\screen\CreditsScreen.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="src\screen\MainMenuScreen.h">
+      <Filter>Screen</Filter>
     </ClInclude>
     <ClInclude Include="src\screen\GameplayScreen.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Screen</Filter>
     </ClInclude>
     <ClInclude Include="src\screen\HowToPlayScreen.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Screen</Filter>
     </ClInclude>
-    <ClInclude Include="src\screen\MainMenuScreen.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="src\entities\Pallette.h">
+      <Filter>Entities</Filter>
     </ClInclude>
-    <ClInclude Include="src\interface\Button.h">
-      <Filter>Archivos de encabezado</Filter>
+    <ClInclude Include="src\entities\Ball.h">
+      <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entities\Brick.h">
+      <Filter>Entities</Filter>
     </ClInclude>
     <ClInclude Include="src\input\InputSystem.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Input</Filter>
     </ClInclude>
     <ClInclude Include="src\panel\ExitPanel.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Panel</Filter>
     </ClInclude>
     <ClInclude Include="src\panel\GameOverPanel.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Panel</Filter>
     </ClInclude>
     <ClInclude Include="src\panel\PausePanel.h">
-      <Filter>Archivos de encabezado</Filter>
+      <Filter>Panel</Filter>
+    </ClInclude>
+    <ClInclude Include="src\screen\CreditsScreen.h">
+      <Filter>Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="src\interface\Button.h">
+      <Filter>Interface</Filter>
+    </ClInclude>
+    <ClInclude Include="src\utilities\Constants.h">
+      <Filter>Utilities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

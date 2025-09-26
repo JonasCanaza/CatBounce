@@ -2,6 +2,9 @@
 
 namespace MainMenu
 {
+	extern int mainMenuMusic;
+	extern int mainMenuMusicLoop;
+
 	struct Background
 	{
 		double width;
@@ -11,9 +14,6 @@ namespace MainMenu
 		double speedX;
 		double speedY;
 	};
-
-	extern int mainMenuMusic;
-	extern int mainMenuMusicLoop;
 
 	void Init();
 	void Input();

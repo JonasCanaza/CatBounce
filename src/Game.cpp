@@ -12,6 +12,7 @@ namespace CatBounce
 {
 	Scenes currentScene = Scenes::MainMenu;
 	bool isRunning = true;
+
 	KeyTracker inputSystem;
 
 	int normalFont;
@@ -30,6 +31,11 @@ namespace CatBounce
 	int hoverButtonTexture;
 	int pressedButtonTexture;
 
+	static void Init();
+	static void Input();
+	static void Update();
+	static void Draw();
+
 	void Game()
 	{
 		srand(time(0));
@@ -46,14 +52,19 @@ namespace CatBounce
 		slClose();
 	}
 
-	void Init()
+	static void Init()
 	{
 		InitKey(inputSystem);
 
-		buttonPressed = slLoadWAV("res/sound/buttonPressed.wav");
+		// BUTTON
+
 		normalButtonTexture = slLoadTexture("res/images/normalButton.png");
 		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
 		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
+		buttonPressed = slLoadWAV("res/sound/buttonPressed.wav");
+
+		// BALL
+
 		normalBallTexture = slLoadTexture("res/images/normalBall.png");
 
 		// FISH
@@ -76,7 +87,7 @@ namespace CatBounce
 		Credits::Init();
 	}
 
-	void Input()
+	static void Input()
 	{
 		switch (currentScene)
 		{
@@ -108,7 +119,7 @@ namespace CatBounce
 		}
 	}
 
-	void Update()
+	static void Update()
 	{
 		switch (currentScene)
 		{
@@ -140,7 +151,7 @@ namespace CatBounce
 		}
 	}
 
-	void Draw()
+	static void Draw()
 	{
 		switch (currentScene)
 		{

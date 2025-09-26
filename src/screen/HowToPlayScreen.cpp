@@ -6,6 +6,8 @@
 
 namespace HowToPlay
 {
+	static const std::string title = "How to play";
+
 	void Init()
 	{
 
@@ -31,7 +33,7 @@ namespace HowToPlay
 		slSetBackColor(0.0, 0.0, 0.0);
 
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		slText(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, "How to play screen");
+		slText(SCREEN_WIDTH / 2.0 - slGetTextWidth(title.c_str()) / 2.0, SCREEN_HEIGHT / 2.0, title.c_str());
 
 		slRender();
 	}

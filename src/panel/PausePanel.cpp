@@ -70,6 +70,8 @@ namespace PausePanel
 					slSoundPlay(CatBounce::buttonPressed);
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
+
+					Gameplay::ResetBall();
 					InitBricks(Gameplay::bricks);
 					Gameplay::pall.lives = 3;
 					Gameplay::pall.score = 0;
@@ -81,9 +83,14 @@ namespace PausePanel
 					slSoundPlay(CatBounce::buttonPressed);
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
-					CatBounce::currentScene = CatBounce::Scenes::MainMenu;
+
+					Gameplay::ResetBall();
+					InitBricks(Gameplay::bricks);
+					Gameplay::pall.lives = 3;
+					Gameplay::pall.score = 0;
 
 					isActive = false;
+					CatBounce::currentScene = CatBounce::Scenes::MainMenu;
 				}
 			}
 		}

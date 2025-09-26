@@ -34,7 +34,6 @@ namespace Gameplay
 	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
 	static bool HasActiveBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
 	static bool IsPlayerAlive(Pallette pall);
-	static void ResetBall();
 
 	void Init()
 	{
@@ -507,9 +506,12 @@ namespace Gameplay
 		return true;
 	}
 
-	static void ResetBall()
+	void ResetBall()
 	{
-
+		ball.x = SCREEN_WIDTH / 2.0;
+		ball.y = SCREEN_HEIGHT / 2.0;
+		ball.speedX = 300.0;
+		ball.speedY = 325.0;
 		ball.isActive = false;
 	}
 }

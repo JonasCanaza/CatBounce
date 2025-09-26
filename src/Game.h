@@ -13,6 +13,7 @@ namespace CatBounce
 
 	extern Scenes currentScene;
 	extern bool isRunning;
+
 	extern KeyTracker inputSystem;
 
 	extern int normalFont;
@@ -32,8 +33,4 @@ namespace CatBounce
 	extern int pressedButtonTexture;
 
 	void Game();
-	void Init();
-	void Input();
-	void Update();
-	void Draw();
 }
