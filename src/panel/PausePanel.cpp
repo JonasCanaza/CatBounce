@@ -39,17 +39,6 @@ namespace PausePanel
 		}
 	}
 
-	void Input()
-	{
-		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
-
-		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
-		{
-			slSoundResumeAll();
-			PausePanel::isActive = !PausePanel::isActive;
-		}
-	}
-
 	void Update()
 	{
 		for (int i = 0; i < MAX_BUTTONS; i++)

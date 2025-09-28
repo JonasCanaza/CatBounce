@@ -40,9 +40,9 @@ namespace Gameplay
 		isGameOver = false;;
 
 		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
-		gameplayBackground = slLoadTexture("res/images/gameplayBackground.png");
-		gameplayHUD = slLoadTexture("res/images/gameplayHUD.png");
-		normalPalletteTexture = slLoadTexture("res/images/normalPallette.png");
+		gameplayBackground = slLoadTexture("res/images/background/gameplay.png");
+		gameplayHUD = slLoadTexture("res/images/ui/gameplayHUD.png");
+		normalPalletteTexture = slLoadTexture("res/images/pallette/normalPallette.png");
 
 		pall.width = 100.0;
 		pall.height = 50.0;
@@ -69,22 +69,22 @@ namespace Gameplay
 
 	void Input()
 	{
+		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
+
+		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
+		{
+			slSoundPause(gameplayMusicLoop);
+			PausePanel::isActive = !PausePanel::isActive;
+		}
+
 		if (!PausePanel::isActive && !isGameOver)
 		{
-			UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
-
-			if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
-			{
-				slSoundPause(gameplayMusicLoop);
-				PausePanel::isActive = !PausePanel::isActive;
-			}
-
-			if (slGetKey('a') || slGetKey('A'))
+			if (slGetKey('a') || slGetKey('A') || slGetKey(SL_KEY_LEFT))
 			{
 				pall.x -= pall.speed * deltaTime;
 			}
 
-			if (slGetKey('d') || slGetKey('D'))
+			if (slGetKey('d') || slGetKey('D') || slGetKey(SL_KEY_RIGHT))
 			{
 				pall.x += pall.speed * deltaTime;
 			}

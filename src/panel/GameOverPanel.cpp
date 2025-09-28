@@ -40,11 +40,6 @@ namespace GameOverPanel
 		}
 	}
 
-	void Input()
-	{
-
-	}
-
 	void Update()
 	{
 		for (int i = 0; i < MAX_BUTTONS; i++)

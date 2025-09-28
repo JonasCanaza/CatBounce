@@ -38,16 +38,6 @@ namespace ExitPanel
 		}
 	}
 
-	void Input()
-	{
-		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
-
-		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
-		{
-			isActive = !isActive;
-		}
-	}
-
 	void Update()
 	{
 		for (int i = 0; i < MAX_BUTTONS; i++)

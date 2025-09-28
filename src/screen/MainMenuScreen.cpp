@@ -31,8 +31,8 @@ namespace MainMenu
 		bgOne.speedX = 0.2;
 		bgOne.speedY = -0.2;
 
-		logo = slLoadTexture("res/images/logo.png");
-		mainMenuBackground = slLoadTexture("res/images/mainMenuBackground.png");
+		logo = slLoadTexture("res/images/ui/logo.png");
+		mainMenuBackground = slLoadTexture("res/images/background/mainMenu.png");
 		mainMenuMusic = slLoadWAV("res/music/mainMenuMusic.wav");
 
 		mainMenuMusicLoop = slSoundLoop(mainMenuMusic);

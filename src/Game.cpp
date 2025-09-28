@@ -58,21 +58,21 @@ namespace CatBounce
 
 		// BUTTON
 
-		normalButtonTexture = slLoadTexture("res/images/normalButton.png");
-		hoverButtonTexture = slLoadTexture("res/images/hoverButton.png");
-		pressedButtonTexture = slLoadTexture("res/images/pressedButton.png");
-		buttonPressed = slLoadWAV("res/sound/buttonPressed.wav");
+		normalButtonTexture = slLoadTexture("res/images/ui/normalButton.png");
+		hoverButtonTexture = slLoadTexture("res/images/ui/hoverButton.png");
+		pressedButtonTexture = slLoadTexture("res/images/ui/pressedButton.png");
+		buttonPressed = slLoadWAV("res/sound/ui/buttonPressed.wav");
 
 		// BALL
 
-		normalBallTexture = slLoadTexture("res/images/normalBall.png");
+		normalBallTexture = slLoadTexture("res/images/ball/normalBall.png");
 
 		// FISH
 
-		normalFishTexture = slLoadTexture("res/images/normalFish.png");
-		fireFishTexture = slLoadTexture("res/images/fireFish.png");
-		speedFishTexture = slLoadTexture("res/images/speedFish.png");
-		slownessFishTexture = slLoadTexture("res/images/slownessFish.png");
+		normalFishTexture = slLoadTexture("res/images/fish/normalFish.png");
+		fireFishTexture = slLoadTexture("res/images/fish/fireFish.png");
+		speedFishTexture = slLoadTexture("res/images/fish/speedFish.png");
+		slownessFishTexture = slLoadTexture("res/images/fish/slownessFish.png");
 
 		// TEXT
 

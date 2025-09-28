@@ -11,10 +11,10 @@ static int ballHitSound4;
 
 void InitBall()
 {
-	ballHitSound1 = slLoadWAV("res/sound/ball/ballHit01.wav");
-	ballHitSound2 = slLoadWAV("res/sound/ball/ballHit02.wav");
-	ballHitSound3 = slLoadWAV("res/sound/ball/ballHit03.wav");
-	ballHitSound4 = slLoadWAV("res/sound/ball/ballHit04.wav");
+	ballHitSound1 = slLoadWAV("res/sound/ball/edgeHit/hit01.wav");
+	ballHitSound2 = slLoadWAV("res/sound/ball/edgeHit/hit02.wav");
+	ballHitSound3 = slLoadWAV("res/sound/ball/edgeHit/hit03.wav");
+	ballHitSound4 = slLoadWAV("res/sound/ball/edgeHit/hit04.wav");
 }
 
 void PlayImpactSound()
