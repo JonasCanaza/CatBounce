@@ -6,6 +6,10 @@ static int fireTexture;
 static int speedTexture;
 static int slownessTexture;
 
+static int fireSound;
+static int speedSound;
+static int slownessSound;
+
 static void SetPowerItemsDefaults(PowerItem powerItem[MAX_FISH_SPECIALS]);
 
 void InitPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
@@ -13,6 +17,10 @@ void InitPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
     fireTexture = slLoadTexture("res/images/spell/fire.png");
     speedTexture = slLoadTexture("res/images/spell/speed.png");
     slownessTexture = slLoadTexture("res/images/spell/slowness.png");
+
+    fireSound = slLoadWAV("res/sound/spell/fireSpell.wav");
+    speedSound = slLoadWAV("res/sound/spell/speedSpell.wav");
+    slownessSound = slLoadWAV("res/sound/spell/slowSpell.wav");
 
     SetPowerItemsDefaults(powerItem);
 }
@@ -31,31 +39,6 @@ static void SetPowerItemsDefaults(PowerItem powerItem[MAX_FISH_SPECIALS])
         powerItem[i].isActive = false;
         powerItem[i].type = PowerItemType::None;
 	}
-}
-
-void ResetPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
-{
-    for (int i = 0; i < MAX_FISH_SPECIALS; i++)
-    {
-        powerItem[i].isActive = false;
-        powerItem[i].type = PowerItemType::None;
-    }
-}
-
-void SpawnPowerItem(PowerItem powerItem[MAX_FISH_SPECIALS], double spawnX, double spawnY, PowerItemType type)
-{
-    for (int i = 0; i < MAX_FISH_SPECIALS; i++)
-    {
-        if (!powerItem[i].isActive)
-        {
-            powerItem[i].x = spawnX;
-            powerItem[i].y = spawnY;
-            powerItem[i].type = type;
-            powerItem[i].isActive = true;
-
-            break;
-        }
-    }
 }
 
 void UpdatePowerItems(PowerItem powerItem[MAX_FISH_SPECIALS], double deltaTime)
@@ -114,5 +97,57 @@ void DrawPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
             slRectangleOutline(powerItem[i].x, powerItem[i].y, powerItem[i].width, powerItem[i].height);
             slSetForeColor(1.0, 1.0, 1.0, 1.0);
         }
+    }
+}
+
+void ResetPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
+{
+    for (int i = 0; i < MAX_FISH_SPECIALS; i++)
+    {
+        powerItem[i].isActive = false;
+        powerItem[i].type = PowerItemType::None;
+    }
+}
+
+void SpawnPowerItem(PowerItem powerItem[MAX_FISH_SPECIALS], double spawnX, double spawnY, PowerItemType type)
+{
+    for (int i = 0; i < MAX_FISH_SPECIALS; i++)
+    {
+        if (!powerItem[i].isActive)
+        {
+            powerItem[i].x = spawnX;
+            powerItem[i].y = spawnY;
+            powerItem[i].type = type;
+            powerItem[i].isActive = true;
+
+            break;
+        }
+    }
+}
+
+void PlaySpellSound(PowerItemType type)
+{
+    switch (type)
+    {
+    case PowerItemType::Fire:
+
+        slSoundPlay(fireSound);
+
+        break;
+    case PowerItemType::Speed:
+
+        slSoundPlay(speedSound);
+
+        break;
+    case PowerItemType::Slowness:
+
+        slSoundPlay(slownessSound);
+
+        break;
+    default:
+
+        // THERE ARE NO MORE TYPES OF SPELLS
+
+        break;
     }
 }

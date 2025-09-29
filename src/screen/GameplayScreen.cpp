@@ -155,20 +155,20 @@ namespace Gameplay
 			{
 				ball.x = ball.radius;
 				ball.speedX *= -1.0;
-				PlayImpactSound();
+				PlayEdgeHitSound();
 			}
 			if (ball.x + ball.radius > SCREEN_WIDTH)
 			{
 				ball.x = SCREEN_WIDTH - ball.radius;
 				ball.speedX *= -1.0;
-				PlayImpactSound();
+				PlayEdgeHitSound();
 			}
 
 			if (ball.y + ball.radius > MAXIMUM_TOP_Y)
 			{
 				ball.y = MAXIMUM_TOP_Y - ball.radius;
 				ball.speedY *= -1.0;
-				PlayImpactSound();
+				PlayEdgeHitSound();
 			}
 			if (ball.y + ball.radius < 0)
 			{
@@ -271,6 +271,7 @@ namespace Gameplay
 						{
 						case FishType::Normal:
 
+							PlayFishBreakSound();
 							pall.score += 100;
 							fish[row][col].isActive = false;
 							std::cout << "POP Fish normal" << std::endl;
@@ -280,6 +281,7 @@ namespace Gameplay
 						case FishType::Speed:
 						case FishType::Slowness:
 
+							PlayFishSpecialSound();
 							pall.score += 125;
 							fish[row][col].isActive = false;
 
@@ -318,12 +320,14 @@ namespace Gameplay
 							case RockState::Cracked:
 							case RockState::Broken:
 
+								PlayRockHitSound();
 								pall.score += 25;
 								fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
 
 								break;
 							case RockState::Fractured:
 
+								PlayRockBreakSound();
 								pall.score += 50;
 								fish[row][col].isActive = false;
 
@@ -342,8 +346,6 @@ namespace Gameplay
 
 							break;
 						}
-
-						PlayImpactSound();
 					}
 				}
 			}
@@ -413,7 +415,7 @@ namespace Gameplay
 
 				collisionCooldown = 0.75;
 
-				PlayImpactSound();
+				PlayEdgeHitSound();
 			}
 
 			for (int i = 0; i < MAX_FISH_SPECIALS; i++)
@@ -424,11 +426,13 @@ namespace Gameplay
 					{
 					case PowerItemType::Fire:
 
+						PlaySpellSound(PowerItemType::Fire);
 						std::cout << "Fire power-up collected!" << std::endl;
 
 						break;
 					case PowerItemType::Speed:
 
+						PlaySpellSound(PowerItemType::Speed);
 						std::cout << "Speed power-up collected!" << std::endl;
 						ball.speedX *= 1.2;
 						ball.speedY *= 1.2;
@@ -436,6 +440,7 @@ namespace Gameplay
 						break;
 					case PowerItemType::Slowness:
 
+						PlaySpellSound(PowerItemType::Slowness);
 						std::cout << "Slowness power-down collected!" << std::endl;
 						pall.speed *= 0.8;
 

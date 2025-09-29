@@ -1,7 +1,5 @@
 #pragma once
 
-const int MAX_BALL_HITS = 4;
-
 struct Ball
 {
 	double radius;
@@ -13,4 +11,8 @@ struct Ball
 };
 
 void InitBall();
-void PlayImpactSound();
+void PlayEdgeHitSound();
+void PlayFishBreakSound();
+void PlayRockHitSound();
+void PlayRockBreakSound();
+void PlayFishSpecialSound();

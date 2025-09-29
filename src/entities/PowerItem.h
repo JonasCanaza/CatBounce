@@ -26,3 +26,4 @@ void UpdatePowerItems(PowerItem powerItem[MAX_FISH_SPECIALS], double deltaTime);
 void DrawPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS]);
 void ResetPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS]);
 void SpawnPowerItem(PowerItem powerItem[MAX_FISH_SPECIALS], double spawnX, double spawnY, PowerItemType type);
+void PlaySpellSound(PowerItemType type);
