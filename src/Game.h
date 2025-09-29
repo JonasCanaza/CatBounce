@@ -23,11 +23,6 @@ namespace CatBounce
 
 	extern int normalBallTexture;
 
-	extern int normalFishTexture;
-	extern int fireFishTexture;
-	extern int speedFishTexture;
-	extern int slownessFishTexture;
-
 	extern int normalButtonTexture;
 	extern int hoverButtonTexture;
 	extern int pressedButtonTexture;

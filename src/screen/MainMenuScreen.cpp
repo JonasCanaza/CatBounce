@@ -1,9 +1,10 @@
 #include "MainMenuScreen.h"
+#include "GameplayScreen.h"
 #include "../interface/Button.h"
 #include "../Game.h"
 #include "../utilities/Constants.h"
-#include "GameplayScreen.h"
 #include "../panel/ExitPanel.h"
+#include "../entities/Fish.h"
 
 #include <iostream>
 #include "sl.h"
@@ -28,8 +29,8 @@ namespace MainMenu
 		bgOne.height = SCREEN_HEIGHT;
 		bgOne.x = SCREEN_WIDTH / 2.0;
 		bgOne.y = SCREEN_HEIGHT / 2.0;
-		bgOne.speedX = 0.2;
-		bgOne.speedY = -0.2;
+		bgOne.speedX = 10.0;
+		bgOne.speedY = -10.0;
 
 		logo = slLoadTexture("res/images/ui/logo.png");
 		mainMenuBackground = slLoadTexture("res/images/background/mainMenu.png");
@@ -74,18 +75,22 @@ namespace MainMenu
 				slSoundPlay(CatBounce::buttonPressed);
 				slSoundStop(mainMenuMusicLoop);
 				Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
+				SetupFishTypes(Gameplay::fish);
 				CatBounce::currentScene = CatBounce::Scenes::Gameplay;
 			}
+
 			if (buttons[1].clicked)
 			{
 				slSoundPlay(CatBounce::buttonPressed);
 				CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
 			}
+
 			if (buttons[2].clicked)
 			{
 				slSoundPlay(CatBounce::buttonPressed);
 				CatBounce::currentScene = CatBounce::Scenes::Credits;
 			}
+
 			if (buttons[3].clicked)
 			{
 				slSoundPlay(CatBounce::buttonPressed);
@@ -97,13 +102,14 @@ namespace MainMenu
 			ExitPanel::Update();
 		}
 
-		bgOne.x += bgOne.speedX;
-		bgOne.y += bgOne.speedY;
+		bgOne.x += bgOne.speedX * slGetDeltaTime();
+		bgOne.y += bgOne.speedY * slGetDeltaTime();
 
 		if (bgOne.x >= SCREEN_WIDTH / 2.0 + bgOne.width)
 		{
 			bgOne.x -= bgOne.width;
 		}
+
 		if (bgOne.x <= SCREEN_WIDTH / 2.0 - bgOne.width)
 		{
 			bgOne.x += bgOne.width;
@@ -113,6 +119,7 @@ namespace MainMenu
 		{
 			bgOne.y -= bgOne.height;
 		}
+
 		if (bgOne.y <= SCREEN_HEIGHT / 2.0 - bgOne.height)
 		{
 			bgOne.y += bgOne.height;

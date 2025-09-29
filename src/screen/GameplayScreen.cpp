@@ -1,7 +1,7 @@
 ﻿#include "GameplayScreen.h"
 #include "../entities/Pallette.h"
 #include "../entities/Ball.h"
-#include "../entities/Brick.h"
+#include "../entities/Fish.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
 #include "../panel/PausePanel.h"
@@ -24,15 +24,16 @@ namespace Gameplay
 
 	Pallette pall;
 	Ball ball;
-	Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
+	Fish fish[MAX_ROW_FISH][MAX_COL_FISH];
+
 	static bool allBricksDestroyed = false;
 	static double deltaTime;
 	static double collisionCooldown = 0.0;
 
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
-	static bool CheckCollisionBallBrick(Ball ball, Brick& brick);
-	static bool HasActiveBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS]);
+	static bool CheckCollisionBallBrick(Ball ball, Fish& brick);
+	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
 	static bool IsPlayerAlive(Pallette pall);
 
 	void Init()
@@ -60,7 +61,7 @@ namespace Gameplay
 		ball.speedY = 325.0;
 		ball.isActive = false;
 
-		InitBricks(bricks);
+		InitFish(fish);
 		InitBall();
 
 		PausePanel::Init();
@@ -183,26 +184,26 @@ namespace Gameplay
 				}
 			}
 
-			for (int row = 0; row < MAX_ROW_BRICKS; row++)
+			for (int row = 0; row < MAX_ROW_FISH; row++)
 			{
-				for (int col = 0; col < MAX_COL_BRICKS; col++)
+				for (int col = 0; col < MAX_COL_FISH; col++)
 				{
-					if (bricks[row][col].isActive && CheckCollisionBallBrick(ball, bricks[row][col]))
+					if (fish[row][col].isActive && CheckCollisionBallBrick(ball, fish[row][col]))
 					{
-						double deltaX = ball.x - bricks[row][col].x;
-						double deltaY = ball.y - bricks[row][col].y;
+						double deltaX = ball.x - fish[row][col].x;
+						double deltaY = ball.y - fish[row][col].y;
 
-						double overlapHorizontal = (bricks[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
-						double overlapVertical = (bricks[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
+						double overlapHorizontal = (fish[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
+						double overlapVertical = (fish[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
 
 						if (overlapHorizontal < overlapVertical)
 						{
 							if (deltaX < 0) // LEFT
 							{
-								ball.x = bricks[row][col].x - bricks[row][col].width / 2.0 - ball.radius - 0.1;
+								ball.x = fish[row][col].x - fish[row][col].width / 2.0 - ball.radius - 0.1;
 								ball.speedX = -fabs(ball.speedX);
 
-								if (ball.y > bricks[row][col].y)
+								if (ball.y > fish[row][col].y)
 								{
 									//std::cout << "LEFT TOP collision" << std::endl;
 									ball.speedY = fabs(ball.speedY);
@@ -215,10 +216,10 @@ namespace Gameplay
 							}
 							else // RIGHT
 							{
-								ball.x = bricks[row][col].x + bricks[row][col].width / 2.0 + ball.radius + 0.1;
+								ball.x = fish[row][col].x + fish[row][col].width / 2.0 + ball.radius + 0.1;
 								ball.speedX = fabs(ball.speedX);
 
-								if (ball.y > bricks[row][col].y)
+								if (ball.y > fish[row][col].y)
 								{
 									//std::cout << "RIGHT TOP collision" << std::endl;
 									ball.speedY = fabs(ball.speedY);
@@ -234,10 +235,10 @@ namespace Gameplay
 						{
 							if (deltaY > 0) // TOP
 							{
-								ball.y = bricks[row][col].y + bricks[row][col].height / 2.0 + ball.radius + 0.1;
+								ball.y = fish[row][col].y + fish[row][col].height / 2.0 + ball.radius + 0.1;
 								ball.speedY = fabs(ball.speedY);
 								
-								if (ball.x < bricks[row][col].x)
+								if (ball.x < fish[row][col].x)
 								{
 									//std::cout << "TOP LEFT collision" << std::endl;
 									ball.speedX = -fabs(ball.speedX);
@@ -250,10 +251,10 @@ namespace Gameplay
 							}
 							else // BOTTOM
 							{
-								ball.y = bricks[row][col].y - bricks[row][col].height / 2.0 - ball.radius - 0.1;
+								ball.y = fish[row][col].y - fish[row][col].height / 2.0 - ball.radius - 0.1;
 								ball.speedY = -fabs(ball.speedY);
 
-								if (ball.x < bricks[row][col].x)
+								if (ball.x < fish[row][col].x)
 								{
 									//std::cout << "BOTTOM LEFT collision" << std::endl;
 									ball.speedX = -fabs(ball.speedX);
@@ -266,34 +267,57 @@ namespace Gameplay
 							}
 						}
 
-						switch (bricks[row][col].type)
+						switch (fish[row][col].type)
 						{
-						case BrickType::Normal:
+						case FishType::Normal:
 
+							pall.score += 100;
+							fish[row][col].isActive = false;
 							std::cout << "POP Fish normal" << std::endl;
 
 							break;
-						case BrickType::Fire:
+						case FishType::Fire:
+						case FishType::Speed:
+						case FishType::Slowness:
 
-							std::cout << "POP Fish fire" << std::endl;
+							pall.score += 125;
+							fish[row][col].isActive = false;
+							std::cout << "POP Fish Special" << std::endl;
 
 							break;
-						case BrickType::Speed:
+						case FishType::Rock:
 
-							std::cout << "POP Fish speed" << std::endl;
+							switch (fish[row][col].rockState)
+							{
+							case RockState::Intact:
+							case RockState::Cracked:
+							case RockState::Broken:
 
-							break;
-						case BrickType::Slowness:
+								pall.score += 25;
+								fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
 
-							std::cout << "POP Fish slowness" << std::endl;
+								break;
+							case RockState::Fractured:
+
+								pall.score += 50;
+								fish[row][col].isActive = false;
+
+								break;
+							default:
+
+								// THERE ARE NO MORE TYPES OF STONE FISH
+
+								break;
+							}
 
 							break;
 						default:
+
+							// THERE ARE NO MORE TYPES OF FISH
+
 							break;
 						}
 
-						pall.score += 100;
-						bricks[row][col].isActive = false;
 						PlayImpactSound();
 					}
 				}
@@ -367,7 +391,7 @@ namespace Gameplay
 				PlayImpactSound();
 			}
 
-			if (!HasActiveBricks(bricks))
+			if (!HasActiveBricks(fish))
 			{
 				isGameOver = true;
 				GameOverPanel::isActive = true;
@@ -394,7 +418,7 @@ namespace Gameplay
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 		slSprite(gameplayBackground, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-		DrawBricks(bricks);
+		DrawFish(fish);
 
 		slSprite(normalPalletteTexture, pall.x, pall.y, pall.width, pall.height);
 
@@ -457,7 +481,7 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool CheckCollisionBallBrick(Ball ball, Brick& brick)
+	static bool CheckCollisionBallBrick(Ball ball, Fish& brick)
 	{
 		double leftBall = ball.x - ball.radius;
 		double rightBall = ball.x + ball.radius;
@@ -480,11 +504,11 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool HasActiveBricks(Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS])
+	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH])
 	{
-		for (int row = 0; row < MAX_ROW_BRICKS; row++)
+		for (int row = 0; row < MAX_ROW_FISH; row++)
 		{	
-			for (int col = 0; col < MAX_COL_BRICKS; col++)
+			for (int col = 0; col < MAX_COL_FISH; col++)
 			{
 				if (bricks[row][col].isActive)
 				{

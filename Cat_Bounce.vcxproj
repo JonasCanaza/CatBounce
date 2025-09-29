@@ -149,7 +149,7 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="src\entities\Ball.cpp" />
-    <ClCompile Include="src\entities\Brick.cpp" />
+    <ClCompile Include="src\entities\Fish.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\input\InputSystem.cpp" />
     <ClCompile Include="src\interface\Button.cpp" />
@@ -164,7 +164,7 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\entities\Ball.h" />
-    <ClInclude Include="src\entities\Brick.h" />
+    <ClInclude Include="src\entities\Fish.h" />
     <ClInclude Include="src\entities\Pallette.h" />
     <ClInclude Include="src\Game.h" />
     <ClInclude Include="src\input\InputSystem.h" />

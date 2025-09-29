@@ -61,7 +61,7 @@ namespace PausePanel
 					Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 
 					Gameplay::ResetBall();
-					InitBricks(Gameplay::bricks);
+					SetupFishTypes(Gameplay::fish);
 					Gameplay::pall.lives = 3;
 					Gameplay::pall.score = 0;
 
@@ -72,11 +72,6 @@ namespace PausePanel
 					slSoundPlay(CatBounce::buttonPressed);
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
-
-					Gameplay::ResetBall();
-					InitBricks(Gameplay::bricks);
-					Gameplay::pall.lives = 3;
-					Gameplay::pall.score = 0;
 
 					isActive = false;
 					CatBounce::currentScene = CatBounce::Scenes::MainMenu;

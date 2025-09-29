@@ -1,7 +1,7 @@
 #pragma once
 #include "../entities/Pallette.h"
 #include "../entities/Ball.h"
-#include "../entities/Brick.h"
+#include "../entities/Fish.h"
 
 namespace Gameplay
 {
@@ -11,7 +11,7 @@ namespace Gameplay
 
 	extern Pallette pall;
 	extern Ball ball;
-	extern Brick bricks[MAX_ROW_BRICKS][MAX_COL_BRICKS];
+	extern Fish fish[MAX_ROW_FISH][MAX_COL_FISH];
 
 	void Init();
 	void Input();

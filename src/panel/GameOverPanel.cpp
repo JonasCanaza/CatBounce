@@ -54,7 +54,7 @@ namespace GameOverPanel
 			Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 
 			Gameplay::ResetBall();
-			InitBricks(Gameplay::bricks);
+			SetupFishTypes(Gameplay::fish);
 			Gameplay::pall.lives = 3;
 			Gameplay::pall.score = 0;
 
@@ -69,7 +69,7 @@ namespace GameOverPanel
 			MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
 
 			Gameplay::ResetBall();
-			InitBricks(Gameplay::bricks);
+			InitFish(Gameplay::fish);
 			Gameplay::pall.lives = 3;
 			Gameplay::pall.score = 0;
 
