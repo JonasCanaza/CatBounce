@@ -36,3 +36,4 @@ struct Fish
 void InitFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
 void DrawFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
 void SetupFishTypes(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
+int GetSpecialFishQuantity();

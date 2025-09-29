@@ -1,7 +1,8 @@
 #include "Button.h"
-#include "sl.h"
 #include "../Game.h"
 #include "../utilities/Constants.h"
+
+#include "sl.h"
 
 Button CreateButton(double x, double y, double width, double height, std::string text)
 {

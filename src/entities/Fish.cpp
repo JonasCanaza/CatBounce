@@ -15,10 +15,14 @@ static int fishStoneBrokenTexture;
 static int fishStoneFracturedTexture;
 
 static const int TOTAL_FISH_SPECIALS = 3;
-static const int MAX_FISH_SPECIALS = 5;
+const int MAX_FISH_SPECIALS = 5;
 static const int MAX_FISH_ROCK = 10;
 
 static void SetFishPositions(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
+static void ResetFish(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
+static void SetRandomSpecialFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
+static void SetRandomRockFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
+static void FillNormalFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
 
 void InitFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 {
@@ -114,26 +118,26 @@ void DrawFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 
 static void SetFishPositions(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 {
-	double brickWidth = 90.0;
-	double brickHeight = 50.0;
+	double width = 90.0;
+	double height = 50.0;
 	double spacing = 5.0;
-	double marginY = MARGIN_Y_BRICKS + 50;
-	double totalWidth = MAX_COL_FISH * brickWidth + (MAX_COL_FISH - 1) * spacing;
+	double marginY = MARGIN_Y_BRICKS + 50.0;
+	double totalWidth = MAX_COL_FISH * width + (MAX_COL_FISH - 1.0) * spacing;
 	double offsetX = (SCREEN_WIDTH - totalWidth) / 2.0;
 
 	for (int row = 0; row < MAX_ROW_FISH; row++)
 	{
 		for (int col = 0; col < MAX_COL_FISH; col++)
 		{
-			fish[row][col].width = brickWidth;
-			fish[row][col].height = brickHeight;
-			fish[row][col].x = offsetX + brickWidth / 2.0 + col * (brickWidth + spacing);
-			fish[row][col].y = SCREEN_HEIGHT - (marginY + brickHeight / 2.0 + row * (brickHeight + spacing));
+			fish[row][col].width = width;
+			fish[row][col].height = height;
+			fish[row][col].x = offsetX + width / 2.0 + col * (width + spacing);
+			fish[row][col].y = SCREEN_HEIGHT - (marginY + height / 2.0 + row * (height + spacing));
 		}
 	}
 }
 
-void ResetFish(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH])
+static void ResetFish(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH])
 {
 	for (int row = 0; row < MAX_ROW_FISH; row++)
 	{
@@ -206,4 +210,9 @@ void SetupFishTypes(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 	SetRandomSpecialFish(fish);
 	SetRandomRockFish(fish);
 	FillNormalFish(fish);
+}
+
+int GetSpecialFishQuantity()
+{
+	return MAX_FISH_SPECIALS;
 }

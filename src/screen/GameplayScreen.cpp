@@ -1,7 +1,4 @@
 ﻿#include "GameplayScreen.h"
-#include "../entities/Pallette.h"
-#include "../entities/Ball.h"
-#include "../entities/Fish.h"
 #include "../utilities/Constants.h"
 #include "../Game.h"
 #include "../panel/PausePanel.h"
@@ -25,6 +22,7 @@ namespace Gameplay
 	Pallette pall;
 	Ball ball;
 	Fish fish[MAX_ROW_FISH][MAX_COL_FISH];
+	PowerItem powerItem[MAX_FISH_SPECIALS];
 
 	static bool allBricksDestroyed = false;
 	static double deltaTime;
@@ -32,8 +30,9 @@ namespace Gameplay
 
 	// PRIVATE FUNCTIONS
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
-	static bool CheckCollisionBallBrick(Ball ball, Fish& brick);
+	static bool CheckCollisionBallBrick(Ball ball, Fish brick);
 	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
+	static bool CheckCollisionPallettePowerItem(Pallette pall, PowerItem power);
 	static bool IsPlayerAlive(Pallette pall);
 
 	void Init()
@@ -61,8 +60,9 @@ namespace Gameplay
 		ball.speedY = 325.0;
 		ball.isActive = false;
 
-		InitFish(fish);
 		InitBall();
+		InitFish(fish);
+		InitPowerItems(powerItem);
 
 		PausePanel::Init();
 		GameOverPanel::Init();
@@ -129,26 +129,26 @@ namespace Gameplay
 			}
 			else
 			{
-				ball.x = pall.x;
-				ball.y = pall.y + pall.height + ball.radius;
+				//ball.x = pall.x;
+				//ball.y = pall.y + pall.height + ball.radius;
 
 				//BALL TEST!!!
-				//if (slGetKey(SL_KEY_UP))
-				//{
-				//	ball.y += 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_LEFT))
-				//{
-				//	ball.x -= 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_DOWN))
-				//{
-				//	ball.y -= 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_RIGHT))
-				//{
-				//	ball.x += 300 * deltaTime;
-				//}
+				if (slGetKey(SL_KEY_UP))
+				{
+					ball.y += 300 * deltaTime;
+				}
+				if (slGetKey(SL_KEY_LEFT))
+				{
+					ball.x -= 300 * deltaTime;
+				}
+				if (slGetKey(SL_KEY_DOWN))
+				{
+					ball.y -= 300 * deltaTime;
+				}
+				if (slGetKey(SL_KEY_RIGHT))
+				{
+					ball.x += 300 * deltaTime;
+				}
 			}
 
 			if (ball.x - ball.radius < 0)
@@ -282,6 +282,31 @@ namespace Gameplay
 
 							pall.score += 125;
 							fish[row][col].isActive = false;
+
+							switch (fish[row][col].type)
+							{
+							case FishType::Fire:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Fire);
+
+								break;
+							case FishType::Speed:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Speed);
+
+								break;
+							case FishType::Slowness:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Slowness);
+
+								break;
+							default:
+
+								// THERE ARE NO MORE TYPES OF SPECIAL FISH
+
+								break;
+							}
+
 							std::cout << "POP Fish Special" << std::endl;
 
 							break;
@@ -391,12 +416,50 @@ namespace Gameplay
 				PlayImpactSound();
 			}
 
+			for (int i = 0; i < MAX_FISH_SPECIALS; i++)
+			{
+				if (powerItem[i].isActive && CheckCollisionPallettePowerItem(pall, powerItem[i]))
+				{
+					switch (powerItem[i].type)
+					{
+					case PowerItemType::Fire:
+
+						std::cout << "Fire power-up collected!" << std::endl;
+
+						break;
+					case PowerItemType::Speed:
+
+						std::cout << "Speed power-up collected!" << std::endl;
+						ball.speedX *= 1.2;
+						ball.speedY *= 1.2;
+
+						break;
+					case PowerItemType::Slowness:
+
+						std::cout << "Slowness power-down collected!" << std::endl;
+						pall.speed *= 0.8;
+
+						break;
+					default:
+
+						// THERE ARE NO MORE TYPES OF POWER ITEMS
+
+						break;
+					}
+
+					powerItem[i].isActive = false;
+					powerItem[i].type = PowerItemType::None;
+				}
+			}
+
 			if (!HasActiveBricks(fish))
 			{
 				isGameOver = true;
 				GameOverPanel::isActive = true;
 				pall.isWinner = true;
 			}
+
+			UpdatePowerItems(powerItem, deltaTime);
 		}
 		else
 		{
@@ -417,6 +480,8 @@ namespace Gameplay
 		slSetBackColor(0.0, 0.0, 0.0);
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 		slSprite(gameplayBackground, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
+
+		DrawPowerItems(powerItem);
 
 		DrawFish(fish);
 
@@ -481,7 +546,7 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool CheckCollisionBallBrick(Ball ball, Fish& brick)
+	static bool CheckCollisionBallBrick(Ball ball, Fish brick)
 	{
 		double leftBall = ball.x - ball.radius;
 		double rightBall = ball.x + ball.radius;
@@ -518,6 +583,29 @@ namespace Gameplay
 		}
 
 		return false;
+	}
+
+	static bool CheckCollisionPallettePowerItem(Pallette pall, PowerItem power)
+	{
+		double leftPall = pall.x - pall.width / 2.0;
+		double rightPall = pall.x + pall.width / 2.0;
+		double topPall = pall.y + pall.height / 2.0;
+		double bottomPall = pall.y - pall.height / 2.0;
+
+		double leftPower = power.x - power.width / 2.0;
+		double rightPower = power.x + power.width / 2.0;
+		double topPower = power.y + power.height / 2.0;
+		double bottomPower = power.y - power.height / 2.0;
+
+		if (rightPall < leftPower ||
+			leftPall > rightPower ||
+			topPall < bottomPower ||
+			bottomPall > topPower)
+		{
+			return false;
+		}
+
+		return true;
 	}
 
 	static bool IsPlayerAlive(Pallette pall)

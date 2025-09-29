@@ -72,6 +72,9 @@
     <ClCompile Include="src\interface\Button.cpp">
       <Filter>Interface</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\PowerItem.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -115,6 +118,9 @@
     </ClInclude>
     <ClInclude Include="src\utilities\Constants.h">
       <Filter>Utilities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\entities\PowerItem.h">
+      <Filter>Entities</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

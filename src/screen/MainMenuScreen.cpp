@@ -5,6 +5,7 @@
 #include "../utilities/Constants.h"
 #include "../panel/ExitPanel.h"
 #include "../entities/Fish.h"
+#include "../entities/PowerItem.h"
 
 #include <iostream>
 #include "sl.h"
