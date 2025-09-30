@@ -47,7 +47,7 @@ namespace ExitPanel
 
 		if (buttons[0].clicked)
 		{
-			slSoundPlay(CatBounce::buttonPressedSound);
+			slSoundPlay(buttonPressedSound);
 
 			isActive = false;
 		}

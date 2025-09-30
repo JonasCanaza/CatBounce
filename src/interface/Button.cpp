@@ -4,6 +4,25 @@
 
 #include "sl.h"
 
+// TEXTURES
+
+int normalButtonTexture;
+int hoverButtonTexture;
+int pressedButtonTexture;
+
+// SOUND
+
+int buttonPressedSound;
+
+void InitButton()
+{
+    normalButtonTexture = slLoadTexture("res/images/ui/normalButton.png");
+    hoverButtonTexture = slLoadTexture("res/images/ui/hoverButton.png");
+    pressedButtonTexture = slLoadTexture("res/images/ui/pressedButton.png");
+
+    buttonPressedSound = slLoadWAV("res/sound/ui/buttonPressed.wav");
+}
+
 Button CreateButton(double x, double y, double width, double height, std::string text)
 {
     Button button;
@@ -53,17 +72,17 @@ void DrawButton(Button button)
     {
     case ButtonState::Normal:
 
-        textureToUse = CatBounce::normalButtonTexture;
+        textureToUse = normalButtonTexture;
 
         break;
     case ButtonState::Hover:
 
-        textureToUse = CatBounce::hoverButtonTexture;
+        textureToUse = hoverButtonTexture;
 
         break;
     case ButtonState::Pressed:
 
-        textureToUse = CatBounce::pressedButtonTexture;
+        textureToUse = pressedButtonTexture;
 
         break;
     default:

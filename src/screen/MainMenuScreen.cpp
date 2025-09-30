@@ -42,11 +42,11 @@ namespace MainMenu
 		double btnWidth = 250.0;
 		double btnHeight = 75.0;
 		double marginBetween = 10.0;
-		double marginBottom = 300.0;
+		double marginTop = 300.0;
 
 		for (int i = 0; i < MAX_BUTTONS; i++)
 		{
-			double y = SCREEN_HEIGHT - marginBottom - (btnHeight + marginBetween) * (i + 1);
+			double y = SCREEN_HEIGHT - marginTop - (btnHeight + marginBetween) * (i + 1);
 
 			buttons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, buttonNames[i]);
 		}
@@ -73,7 +73,7 @@ namespace MainMenu
 
 			if (buttons[0].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressedSound);
+				slSoundPlay(buttonPressedSound);
 				slSoundStop(mainMenuMusicLoop);
 				Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 				SetupFishTypes(Gameplay::fish);
@@ -82,19 +82,19 @@ namespace MainMenu
 
 			if (buttons[1].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressedSound);
+				slSoundPlay(buttonPressedSound);
 				CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
 			}
 
 			if (buttons[2].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressedSound);
+				slSoundPlay(buttonPressedSound);
 				CatBounce::currentScene = CatBounce::Scenes::Credits;
 			}
 
 			if (buttons[3].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressedSound);
+				slSoundPlay(buttonPressedSound);
 				ExitPanel::isActive = !ExitPanel::isActive;
 			}
 		}

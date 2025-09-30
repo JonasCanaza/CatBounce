@@ -49,7 +49,7 @@ namespace GameOverPanel
 
 		if (buttons[0].clicked)
 		{
-			slSoundPlay(CatBounce::buttonPressedSound);
+			slSoundPlay(buttonPressedSound);
 			slSoundStop(Gameplay::gameplayMusicLoop);
 			Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 
@@ -64,7 +64,7 @@ namespace GameOverPanel
 		}
 		if (buttons[1].clicked)
 		{
-			slSoundPlay(CatBounce::buttonPressedSound);
+			slSoundPlay(buttonPressedSound);
 			slSoundStop(Gameplay::gameplayMusicLoop);
 			MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
 

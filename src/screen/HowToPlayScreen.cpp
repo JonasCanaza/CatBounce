@@ -1,6 +1,6 @@
 #include "HowToPlayScreen.h"
-#include "../utilities/Constants.h"
 #include "../Game.h"
+#include "../utilities/Constants.h"
 
 #include "sl.h"
 

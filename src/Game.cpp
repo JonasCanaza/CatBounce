@@ -4,6 +4,7 @@
 #include "screen/HowToPlayScreen.h"
 #include "screen//CreditsScreen.h"
 #include "utilities/Constants.h"
+#include "interface/Button.h"
 
 #include "sl.h"
 #include <ctime>
@@ -17,12 +18,6 @@ namespace CatBounce
 
 	int normalFont;
 	int specialFont;
-
-	int buttonPressedSound;
-
-	int normalButtonTexture;
-	int hoverButtonTexture;
-	int pressedButtonTexture;
 
 	static void Init();
 	static void Input();
@@ -48,20 +43,14 @@ namespace CatBounce
 	static void Init()
 	{
 		InitKey(inputSystem);
-
-		// BUTTON
-
-		normalButtonTexture = slLoadTexture("res/images/ui/normalButton.png");
-		hoverButtonTexture = slLoadTexture("res/images/ui/hoverButton.png");
-		pressedButtonTexture = slLoadTexture("res/images/ui/pressedButton.png");
-		buttonPressedSound = slLoadWAV("res/sound/ui/buttonPressed.wav");
+		InitButton();
 
 		// TEXT
 
-		normalFont = slLoadFont("res/fonts/Roboto.ttf");
+		normalFont = slLoadFont("res/fonts/AROneSans/AROneSans-Regular.ttf");
 		specialFont = slLoadFont("res/fonts/pusab/PUSAB___.ttf");
 
-		slSetFont(specialFont, 24);
+		slSetFont(normalFont, 24);
 
 		MainMenu::Init();
 		Gameplay::Init();

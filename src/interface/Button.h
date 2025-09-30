@@ -1,6 +1,8 @@
 #pragma once
 #include <string>
 
+extern int buttonPressedSound;
+
 enum class ButtonState
 {
     Normal,
@@ -19,6 +21,7 @@ struct Button
     bool clicked;
 };
 
+void InitButton();
 Button CreateButton(double x, double y, double width, double height, std::string text);
 void UpdateButton(Button& button);
 void DrawButton(Button button);

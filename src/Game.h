@@ -19,11 +19,5 @@ namespace CatBounce
 	extern int normalFont;
 	extern int specialFont;
 
-	extern int buttonPressedSound;
-
-	extern int normalButtonTexture;
-	extern int hoverButtonTexture;
-	extern int pressedButtonTexture;
-
 	void Game();
 }
