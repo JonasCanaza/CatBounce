@@ -43,8 +43,8 @@ void InitPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
 
 static void SetPowerItemsDefaults(PowerItem powerItem[MAX_FISH_SPECIALS])
 {
-	double width = 40.0;
-	double height = 40.0;
+	double width = 50.0;
+	double height = 50.0;
 	double speedY = 200.0;
 
 	for (int i = 0; i < MAX_FISH_SPECIALS; i++)
@@ -123,10 +123,6 @@ void DrawPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
 
             slSetForeColor(1.0, 1.0, 1.0, 1.0);
             slSprite(texture, powerItem[i].x, powerItem[i].y, powerItem[i].width, powerItem[i].height);
-            // TEST!!
-            slSetForeColor(1.0, 0.0, 0.0, 1.0);
-            slRectangleOutline(powerItem[i].x, powerItem[i].y, powerItem[i].width, powerItem[i].height);
-            slSetForeColor(1.0, 1.0, 1.0, 1.0);
         }
     }
 }

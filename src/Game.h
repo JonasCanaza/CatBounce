@@ -16,7 +16,6 @@ namespace CatBounce
 
 	extern KeyTracker inputSystem;
 
-	extern int normalFont;
 	extern int specialFont;
 
 	void Game();

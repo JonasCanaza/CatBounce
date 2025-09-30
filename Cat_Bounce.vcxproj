@@ -158,7 +158,10 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
     <ClCompile Include="src\main.cpp" />
     <ClCompile Include="src\panel\ExitPanel.cpp" />
     <ClCompile Include="src\panel\GameOverPanel.cpp" />
+    <ClCompile Include="src\panel\GeneralRulesPanel.cpp" />
+    <ClCompile Include="src\panel\KeyRulesPanel.cpp" />
     <ClCompile Include="src\panel\PausePanel.cpp" />
+    <ClCompile Include="src\panel\SpellRulesPanel.cpp" />
     <ClCompile Include="src\screen\CreditsScreen.cpp" />
     <ClCompile Include="src\screen\GameplayScreen.cpp" />
     <ClCompile Include="src\screen\HowToPlayScreen.cpp" />
@@ -174,7 +177,10 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
     <ClInclude Include="src\interface\Button.h" />
     <ClInclude Include="src\panel\ExitPanel.h" />
     <ClInclude Include="src\panel\GameOverPanel.h" />
+    <ClInclude Include="src\panel\GeneralRulesPanel.h" />
+    <ClInclude Include="src\panel\KeyRulesPanel.h" />
     <ClInclude Include="src\panel\PausePanel.h" />
+    <ClInclude Include="src\panel\SpellRulesPanel.h" />
     <ClInclude Include="src\screen\CreditsScreen.h" />
     <ClInclude Include="src\screen\GameplayScreen.h" />
     <ClInclude Include="src\screen\HowToPlayScreen.h" />

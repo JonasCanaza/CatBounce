@@ -22,21 +22,14 @@ namespace MainMenu
 	static Button buttons[MAX_BUTTONS];
 	static std::string buttonNames[MAX_BUTTONS] = { "PLAY", "RULES", "CREDITS", "EXIT" };
 
+	static void InitBackground();
+
 	void Init()
 	{
-		ExitPanel::Init();
-
-		bgOne.width = SCREEN_WIDTH;
-		bgOne.height = SCREEN_HEIGHT;
-		bgOne.x = SCREEN_WIDTH / 2.0;
-		bgOne.y = SCREEN_HEIGHT / 2.0;
-		bgOne.speedX = 10.0;
-		bgOne.speedY = -10.0;
-
 		logo = slLoadTexture("res/images/ui/logo.png");
 		mainMenuBackground = slLoadTexture("res/images/background/mainMenu.png");
-		mainMenuMusic = slLoadWAV("res/music/mainMenuMusic.wav");
 
+		mainMenuMusic = slLoadWAV("res/music/mainMenuMusic.wav");
 		mainMenuMusicLoop = slSoundLoop(mainMenuMusic);
 
 		double btnWidth = 250.0;
@@ -50,6 +43,9 @@ namespace MainMenu
 
 			buttons[i] = CreateButton((SCREEN_WIDTH / 2.0) - (btnWidth / 2.0), y, btnWidth, btnHeight, buttonNames[i]);
 		}
+
+		InitBackground();
+		ExitPanel::Init();
 	}
 
 	void Input()
@@ -104,6 +100,40 @@ namespace MainMenu
 			ExitPanel::Update();
 		}
 
+		UpdateBackground();
+	}
+	
+	void Draw()
+	{
+		slSetBackColor(0.0, 0.0, 0.0);
+		DrawBackground();
+		slSprite(logo, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0 + 200, 450, 350);
+
+		for (int i = 0; i < MAX_BUTTONS; i++)
+		{
+			DrawButton(buttons[i]);
+		}
+
+		if (ExitPanel::isActive)
+		{
+			ExitPanel::Draw();
+		}
+
+		slRender();
+	}
+
+	static void InitBackground()
+	{
+		bgOne.width = SCREEN_WIDTH;
+		bgOne.height = SCREEN_HEIGHT;
+		bgOne.x = SCREEN_WIDTH / 2.0;
+		bgOne.y = SCREEN_HEIGHT / 2.0;
+		bgOne.speedX = 10.0;
+		bgOne.speedY = -10.0;
+	}
+
+	void UpdateBackground()
+	{
 		bgOne.x += bgOne.speedX * slGetDeltaTime();
 		bgOne.y += bgOne.speedY * slGetDeltaTime();
 
@@ -127,10 +157,9 @@ namespace MainMenu
 			bgOne.y += bgOne.height;
 		}
 	}
-	
-	void Draw()
+
+	void DrawBackground()
 	{
-		slSetBackColor(0.0, 0.0, 0.0);
 		slSprite(mainMenuBackground, bgOne.x, bgOne.y, bgOne.width, bgOne.height);
 
 		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y, bgOne.width, bgOne.height);
@@ -142,19 +171,5 @@ namespace MainMenu
 		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y - bgOne.height, bgOne.width, bgOne.height);
 		slSprite(mainMenuBackground, bgOne.x - bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
 		slSprite(mainMenuBackground, bgOne.x + bgOne.width, bgOne.y + bgOne.height, bgOne.width, bgOne.height);
-
-		slSprite(logo, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0 + 200, 450, 350);
-
-		for (int i = 0; i < MAX_BUTTONS; i++)
-		{
-			DrawButton(buttons[i]);
-		}
-
-		if (ExitPanel::isActive)
-		{
-			ExitPanel::Draw();
-		}
-
-		slRender();
 	}
 }

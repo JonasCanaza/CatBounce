@@ -1,14 +1,14 @@
-#include "CreditsScreen.h"
+#include "KeyRulesPanel.h"
 #include "../Game.h"
-#include "../utilities/Constants.h"
 #include "../interface/Button.h"
-#include "MainMenuScreen.h"
+#include "../utilities/Constants.h"
+#include "../screen/MainMenuScreen.h"
 
-#include "sl.h"
-#include <iostream>
+#include <sl.h>
 
-namespace Credits
+namespace KeyRulesPanel
 {
+	bool isActive;
 	static int texts;
 
 	static Button button;
@@ -16,7 +16,8 @@ namespace Credits
 
 	void Init()
 	{
-		texts = slLoadTexture("res/images/ui/creditsText.png");
+		isActive = false;
+		texts = slLoadTexture("res/images/ui/keysText.png");
 
 		double btnWidth = 250.0;
 		double btnHeight = 75.0;
@@ -31,7 +32,7 @@ namespace Credits
 
 		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
 		{
-			CatBounce::currentScene = CatBounce::Scenes::MainMenu;
+			isActive = false;
 		}
 	}
 
@@ -42,7 +43,7 @@ namespace Credits
 		if (button.clicked)
 		{
 			slSoundPlay(buttonPressedSound);
-			CatBounce::currentScene = CatBounce::Scenes::MainMenu;
+			isActive = false;
 		}
 
 		MainMenu::UpdateBackground();
@@ -50,16 +51,12 @@ namespace Credits
 
 	void Draw()
 	{
-		slSetBackColor(0.0, 0.0, 0.0);
-		MainMenu::DrawBackground();
-		slSetForeColor(0.0, 0.0, 0.0, 0.4);
+		slSetForeColor(0.0, 0.0, 0.0, 0.85);
 		slRectangleFill(SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		
+
 		slSprite(texts, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
 		DrawButton(button);
-
-		slRender();
 	}
 }

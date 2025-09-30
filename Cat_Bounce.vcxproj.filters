@@ -78,6 +78,15 @@
     <ClCompile Include="src\entities\Pallette.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\panel\GeneralRulesPanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\panel\KeyRulesPanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
+    <ClCompile Include="src\panel\SpellRulesPanel.cpp">
+      <Filter>Panels</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">
@@ -124,6 +133,15 @@
     </ClInclude>
     <ClInclude Include="src\entities\PowerItem.h">
       <Filter>Entities</Filter>
+    </ClInclude>
+    <ClInclude Include="src\panel\GeneralRulesPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\panel\KeyRulesPanel.h">
+      <Filter>Panels</Filter>
+    </ClInclude>
+    <ClInclude Include="src\panel\SpellRulesPanel.h">
+      <Filter>Panels</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

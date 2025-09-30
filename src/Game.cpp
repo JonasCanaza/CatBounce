@@ -16,7 +16,6 @@ namespace CatBounce
 
 	KeyTracker inputSystem;
 
-	int normalFont;
 	int specialFont;
 
 	static void Init();
@@ -47,10 +46,9 @@ namespace CatBounce
 
 		// TEXT
 
-		normalFont = slLoadFont("res/fonts/AROneSans/AROneSans-Regular.ttf");
 		specialFont = slLoadFont("res/fonts/pusab/PUSAB___.ttf");
 
-		slSetFont(normalFont, 24);
+		slSetFont(specialFont, 24);
 
 		MainMenu::Init();
 		Gameplay::Init();

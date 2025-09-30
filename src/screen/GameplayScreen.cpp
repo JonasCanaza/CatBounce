@@ -60,8 +60,13 @@ namespace Gameplay
 
 		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown && !isGameOver)
 		{
-			slSoundPause(gameplayMusicLoop);
+			slSoundPause(gameplayMusicLoop);	
 			PausePanel::isActive = !PausePanel::isActive;
+
+			if (!PausePanel::isActive)
+			{
+				slSoundResumeAll();
+			}
 		}
 
 		if (!PausePanel::isActive && !isGameOver)
@@ -76,7 +81,7 @@ namespace Gameplay
 				pall.x += pall.speed * deltaTime;
 			}
 
-			if (slGetKey(' '))
+			if (slGetKey(' ') || slGetKey(SL_KEY_UP))
 			{
 				ball.isActive = true;
 			}
@@ -354,7 +359,7 @@ namespace Gameplay
 								case RockState::Fractured:
 
 									PlayRockBreakSound();
-									pall.score += 50;
+									pall.score += 150;
 									fish[row][col].isActive = false;
 
 									break;

@@ -19,4 +19,6 @@ namespace MainMenu
 	void Input();
 	void Update();
 	void Draw();
+	void UpdateBackground();
+	void DrawBackground();
 }
