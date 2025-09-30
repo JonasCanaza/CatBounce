@@ -150,6 +150,7 @@ xcopy "$(SolutionDir)res" "$(OutDir)res\" /e /i  /y</Command>
   <ItemGroup>
     <ClCompile Include="src\entities\Ball.cpp" />
     <ClCompile Include="src\entities\Fish.cpp" />
+    <ClCompile Include="src\entities\Pallette.cpp" />
     <ClCompile Include="src\entities\PowerItem.cpp" />
     <ClCompile Include="src\Game.cpp" />
     <ClCompile Include="src\input\InputSystem.cpp" />

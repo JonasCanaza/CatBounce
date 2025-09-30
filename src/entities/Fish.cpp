@@ -239,8 +239,3 @@ void SetupFishTypes(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 	SetRandomRockFish(fish);
 	FillNormalFish(fish);
 }
-
-int GetSpecialFishQuantity()
-{
-	return MAX_FISH_SPECIALS;
-}

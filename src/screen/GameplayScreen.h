@@ -7,6 +7,7 @@
 namespace Gameplay
 {
 	extern bool isGameOver;
+
 	extern int gameplayMusic;
 	extern int gameplayMusicLoop;
 
@@ -20,5 +21,5 @@ namespace Gameplay
 	void Update();
 	void Draw();
 
-	void ResetBall();
+	void ResetLevel();
 }

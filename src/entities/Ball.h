@@ -21,6 +21,8 @@ struct Ball
 
 void InitBall();
 void DrawBall();
+void SetBallDefault();
+void SetBallDefaultPosition();
 void PlayDefaultHitSound();
 void PlayFishBreakSound();
 void PlayRockHitSound();

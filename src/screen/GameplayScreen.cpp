@@ -13,12 +13,11 @@ namespace Gameplay
 {
 	bool isGameOver;
 
-	int gameplayMusic;
-	int gameplayMusicLoop;
-
 	static int gameplayBackground;
 	static int gameplayHUD;
-	static int normalPalletteTexture;
+
+	int gameplayMusic;
+	int gameplayMusicLoop;
 
 	Pallette pall;
 	Ball ball;
@@ -41,21 +40,12 @@ namespace Gameplay
 	{
 		isGameOver = false;
 
-		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
-
 		gameplayBackground = slLoadTexture("res/images/background/gameplay.png");
 		gameplayHUD = slLoadTexture("res/images/ui/gameplayHUD.png");
-		normalPalletteTexture = slLoadTexture("res/images/pallette/normalPallette.png");
 
-		pall.width = 100.0;
-		pall.height = 50.0;
-		pall.x = SCREEN_WIDTH / 2.0;
-		pall.y = pall.height;
-		pall.speed = 700.0;
-		pall.lives = 1;
-		pall.score = 0;
-		pall.isWinner = false;
+		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
 
+		InitPallette();
 		InitBall();
 		InitFish(fish);
 		InitPowerItems(powerItem);
@@ -68,7 +58,7 @@ namespace Gameplay
 	{
 		UpdateKey(CatBounce::inputSystem, SL_KEY_ESCAPE);
 
-		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown)
+		if (GetKeyState(CatBounce::inputSystem) == KeyState::KeyDown && !isGameOver)
 		{
 			slSoundPause(gameplayMusicLoop);
 			PausePanel::isActive = !PausePanel::isActive;
@@ -97,18 +87,31 @@ namespace Gameplay
 	{
 		deltaTime = slGetDeltaTime();
 
-		if (collisionCooldown > 0.0)
-		{
-			collisionCooldown -= deltaTime;
-
-			if (collisionCooldown <= 0.0)
-			{
-				collisionCooldown = 0.0;
-			}
-		}
-
 		if (!PausePanel::isActive && !isGameOver)
 		{
+			if (collisionCooldown > 0.0)
+			{
+				collisionCooldown -= deltaTime;
+
+				if (collisionCooldown <= 0.0)
+				{
+					collisionCooldown = 0.0;
+				}
+			}
+
+			if (ball.type != BallType::Normal)
+			{
+				ball.durationEffect -= deltaTime;
+
+				if (ball.durationEffect <= 0.0)
+				{
+					ball.durationEffect = 0.0;
+					ball.type = BallType::Normal;
+				}
+			}
+
+			std::cout << ball.durationEffect << std::endl;
+
 			if (pall.x - pall.width / 2.0 < 0)
 			{
 				pall.x = pall.width / 2.0;
@@ -130,26 +133,26 @@ namespace Gameplay
 			}
 			else
 			{
-				//ball.x = pall.x;
-				//ball.y = pall.y + pall.height + ball.radius;
+				ball.x = pall.x;
+				ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
 
 				//BALL TEST!!!
-				if (slGetKey(SL_KEY_UP))
-				{
-					ball.y += 300 * deltaTime;
-				}
-				if (slGetKey(SL_KEY_LEFT))
-				{
-					ball.x -= 300 * deltaTime;
-				}
-				if (slGetKey(SL_KEY_DOWN))
-				{
-					ball.y -= 300 * deltaTime;
-				}
-				if (slGetKey(SL_KEY_RIGHT))
-				{
-					ball.x += 300 * deltaTime;
-				}
+				//if (slGetKey(SL_KEY_UP))
+				//{
+				//	ball.y += 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_LEFT))
+				//{
+				//	ball.x -= 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_DOWN))
+				//{
+				//	ball.y -= 300 * deltaTime;
+				//}
+				//if (slGetKey(SL_KEY_RIGHT))
+				//{
+				//	ball.x += 300 * deltaTime;
+				//}
 			}
 
 			if (ball.x - ball.radius < 0)
@@ -175,7 +178,9 @@ namespace Gameplay
 			{
 				ball.speedY = std::abs(ball.speedY);
 				pall.lives--;
-				ResetBall();
+
+				SetPalleteDefaultPosition();
+				SetBallDefaultPosition();
 
 				if (pall.lives <= 0)
 				{
@@ -454,41 +459,37 @@ namespace Gameplay
 
 						PlaySpellSound(PowerItemType::Fire);
 						ball.type = BallType::Fire;
-						std::cout << "Fire power-up collected!" << std::endl;
+						ball.durationEffect = 6.5;
 
 						break;
 					case PowerItemType::Speed:
 
 						PlaySpellSound(PowerItemType::Speed);
-						std::cout << "Speed power-up collected!" << std::endl;
 						pall.speed *= 1.1;
 
 						break;
 					case PowerItemType::Slowness:
 
 						PlaySpellSound(PowerItemType::Slowness);
-						std::cout << "Slowness power-down collected!" << std::endl;
 						pall.speed *= 0.9;
 
 						break;
 					case PowerItemType::Life:
 
 						PlaySpellSound(PowerItemType::Life);
-						std::cout << "Life power-up collected!" << std::endl;
 						pall.lives++;
 
 						break;
 					case PowerItemType::Water:
 
 						PlaySpellSound(PowerItemType::Water);
-						std::cout << "Water power-down collected!" << std::endl;
 						ball.type = BallType::Water;
+						ball.durationEffect = 15.0;
 
 						break;
 					case PowerItemType::Poison:
 
 						PlaySpellSound(PowerItemType::Poison);
-						std::cout << "Poison power-down collected!" << std::endl;
 						pall.lives--;
 
 						break;
@@ -537,15 +538,9 @@ namespace Gameplay
 
 		DrawFish(fish);
 
-		slSprite(normalPalletteTexture, pall.x, pall.y, pall.width, pall.height);
-
-		slSetForeColor(0.0, 0.0, 1.0, 1.0);
-		slRectangleOutline(pall.x, pall.y, pall.width, pall.height);
+		DrawPallete();
 
 		DrawBall();
-
-		slSetForeColor(1.0, 0.0, 0.0, 1.0);
-		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
 
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 		slSprite(gameplayHUD, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT - 50.0, SCREEN_WIDTH, 100.0);
@@ -669,12 +664,11 @@ namespace Gameplay
 		return true;
 	}
 
-	void ResetBall()
+	void ResetLevel()
 	{
-		ball.x = SCREEN_WIDTH / 2.0;
-		ball.y = SCREEN_HEIGHT / 2.0;
-		ball.speedX = 300.0;
-		ball.speedY = 325.0;
-		ball.isActive = false;
+		SetPalleteDefault();
+		SetBallDefault();
+		SetupFishTypes(fish);
+		ResetPowerItems(powerItem);
 	}
 }

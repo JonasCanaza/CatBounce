@@ -60,10 +60,7 @@ namespace PausePanel
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 
-					Gameplay::ResetBall();
-					SetupFishTypes(Gameplay::fish);
-					Gameplay::pall.lives = 3;
-					Gameplay::pall.score = 0;
+					Gameplay::ResetLevel();
 
 					isActive = false;
 				}

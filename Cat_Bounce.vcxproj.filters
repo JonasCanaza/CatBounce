@@ -75,6 +75,9 @@
     <ClCompile Include="src\entities\PowerItem.cpp">
       <Filter>Entities</Filter>
     </ClCompile>
+    <ClCompile Include="src\entities\Pallette.cpp">
+      <Filter>Entities</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="src\Game.h">

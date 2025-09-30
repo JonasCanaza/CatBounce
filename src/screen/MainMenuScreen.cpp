@@ -76,6 +76,7 @@ namespace MainMenu
 				slSoundPlay(buttonPressedSound);
 				slSoundStop(mainMenuMusicLoop);
 				Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
+				Gameplay::ResetLevel();
 				SetupFishTypes(Gameplay::fish);
 				CatBounce::currentScene = CatBounce::Scenes::Gameplay;
 			}

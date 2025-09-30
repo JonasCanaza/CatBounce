@@ -35,10 +35,6 @@ static int rockBreak2;
 static int rockBreak3;
 static int fishSpecialHit;
 
-// PRIVATE FUNCTIONS
-
-static void SetBallDefault();
-
 void InitBall()
 {
 	normalBallTexture = slLoadTexture("res/images/ball/normalBall.png");
@@ -100,15 +96,21 @@ void DrawBall()
 	slSprite(texture, Gameplay::ball.x, Gameplay::ball.y, Gameplay::ball.radius * 2.0, Gameplay::ball.radius * 2.0);
 }
 
-static void SetBallDefault()
+void SetBallDefault()
+{
+	SetBallDefaultPosition();
+	Gameplay::ball.speedX = 300.0;
+	Gameplay::ball.speedY = 325.0;
+	Gameplay::ball.type = BallType::Normal;
+	Gameplay::ball.durationEffect = 0.0;
+}
+
+void SetBallDefaultPosition()
 {
 	Gameplay::ball.radius = 15.0;
 	Gameplay::ball.x = Gameplay::pall.x;
 	Gameplay::ball.y = Gameplay::pall.y + Gameplay::pall.height / 2.0 + Gameplay::ball.radius + 0.1;
-	Gameplay::ball.speedX = 300.0;
-	Gameplay::ball.speedY = 325.0;
 	Gameplay::ball.isActive = false;
-	Gameplay::ball.type = BallType::Normal;
 }
 
 void PlayDefaultHitSound()

@@ -11,3 +11,9 @@ struct Pallette
 	int score;
 	bool isWinner;
 };
+
+void InitPallette();
+void UpdatePallete(double deltaTime);
+void DrawPallete();
+void SetPalleteDefault();
+void SetPalleteDefaultPosition();
