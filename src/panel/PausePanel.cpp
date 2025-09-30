@@ -49,14 +49,14 @@ namespace PausePanel
 			{
 				if (buttonNames[i] == "RESUME")
 				{
-					slSoundPlay(CatBounce::buttonPressed);
+					slSoundPlay(CatBounce::buttonPressedSound);
 					slSoundResumeAll();
 
 					isActive = false;
 				}
 				else if (buttonNames[i] == "RESTART")
 				{
-					slSoundPlay(CatBounce::buttonPressed);
+					slSoundPlay(CatBounce::buttonPressedSound);
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 
@@ -69,7 +69,7 @@ namespace PausePanel
 				}
 				else if (buttonNames[i] == "EXIT")
 				{
-					slSoundPlay(CatBounce::buttonPressed);
+					slSoundPlay(CatBounce::buttonPressedSound);
 					slSoundStop(Gameplay::gameplayMusicLoop);
 					MainMenu::mainMenuMusicLoop = slSoundLoop(MainMenu::mainMenuMusic);
 

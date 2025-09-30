@@ -10,6 +10,9 @@ enum class FishType
 	Fire,
 	Speed,
 	Slowness,
+	Life,
+	Water,
+	Poison,
 	Rock
 };
 

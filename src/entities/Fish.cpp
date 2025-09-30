@@ -5,18 +5,25 @@
 #include "sl.h"
 #include <iostream>
 
+static const int TOTAL_FISH_SPECIALS = 6;
+static const int MAX_FISH_SPECIALS = 5;
+static const int MAX_FISH_ROCK = 10;
+
+// TEXTURES
+
 static int normalFishTexture;
 static int fireFishTexture;
 static int speedFishTexture;
 static int slownessFishTexture;
+static int lifeFishTexture;
+static int waterFishTexture;
+static int poisonFishTexture;
 static int fishStoneIntactTexture;
 static int fishStoneCrackedTexture;
 static int fishStoneBrokenTexture;
 static int fishStoneFracturedTexture;
 
-static const int TOTAL_FISH_SPECIALS = 3;
-const int MAX_FISH_SPECIALS = 5;
-static const int MAX_FISH_ROCK = 10;
+// PRIVATE FUNCTIONS
 
 static void SetFishPositions(Fish fish[MAX_ROW_FISH][MAX_COL_FISH]);
 static void ResetFish(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
@@ -30,6 +37,9 @@ void InitFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 	fireFishTexture = slLoadTexture("res/images/fish/fireFish.png");
 	speedFishTexture = slLoadTexture("res/images/fish/speedFish.png");
 	slownessFishTexture = slLoadTexture("res/images/fish/slownessFish.png");
+	lifeFishTexture = slLoadTexture("res/images/fish/lifeFish.png");
+	waterFishTexture = slLoadTexture("res/images/fish/waterFish.png");
+	poisonFishTexture = slLoadTexture("res/images/fish/poisonFish.png");
 	fishStoneIntactTexture = slLoadTexture("res/images/fish/fishStoneIntact.png");
 	fishStoneCrackedTexture = slLoadTexture("res/images/fish/fishStoneCracked.png");
 	fishStoneBrokenTexture = slLoadTexture("res/images/fish/fishStoneBroken.png");
@@ -50,27 +60,43 @@ void DrawFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 				double y = fish[row][col].y;
 				double width = fish[row][col].width;
 				double height = fish[row][col].height;
+				int texture = 0;
 
 				switch (fish[row][col].type)
 				{
 				case FishType::Normal:
 
-					slSprite(normalFishTexture, x, y, width, height);
+					texture = normalFishTexture;
 
 					break;
 				case FishType::Fire:
 
-					slSprite(fireFishTexture, x, y, width, height);
+					texture = fireFishTexture;
 
 					break;
 				case FishType::Speed:
 
-					slSprite(speedFishTexture, x, y, width, height);
+					texture = speedFishTexture;
 
 					break;
 				case FishType::Slowness:
 
-					slSprite(slownessFishTexture, x, y, width, height);
+					texture = slownessFishTexture;
+
+					break;
+				case FishType::Life:
+
+					texture = lifeFishTexture;
+
+					break;
+				case FishType::Water:
+
+					texture = waterFishTexture;
+
+					break;
+				case FishType::Poison:
+
+					texture = poisonFishTexture;
 
 					break;
 				case FishType::Rock:
@@ -79,22 +105,22 @@ void DrawFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 					{
 					case RockState::Fractured:
 
-						slSprite(fishStoneFracturedTexture, x, y, width, height);
+						texture = fishStoneFracturedTexture;
 
 						break;
 					case RockState::Broken:
 
-						slSprite(fishStoneBrokenTexture, x, y, width, height);
+						texture = fishStoneBrokenTexture;
 
 						break;
 					case RockState::Cracked:
 
-						slSprite(fishStoneCrackedTexture, x, y, width, height);
+						texture = fishStoneCrackedTexture;
 
 						break;
 					case RockState::Intact:
 
-						slSprite(fishStoneIntactTexture, x, y, width, height);
+						texture = fishStoneIntactTexture;
 
 						break;
 					default:
@@ -111,6 +137,8 @@ void DrawFish(Fish fish[MAX_ROW_FISH][MAX_COL_FISH])
 
 					break;
 				}
+
+				slSprite(texture, x, y, width, height);
 			}
 		}
 	}

@@ -73,7 +73,7 @@ namespace MainMenu
 
 			if (buttons[0].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressed);
+				slSoundPlay(CatBounce::buttonPressedSound);
 				slSoundStop(mainMenuMusicLoop);
 				Gameplay::gameplayMusicLoop = slSoundLoop(Gameplay::gameplayMusic);
 				SetupFishTypes(Gameplay::fish);
@@ -82,19 +82,19 @@ namespace MainMenu
 
 			if (buttons[1].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressed);
+				slSoundPlay(CatBounce::buttonPressedSound);
 				CatBounce::currentScene = CatBounce::Scenes::HowToPlay;
 			}
 
 			if (buttons[2].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressed);
+				slSoundPlay(CatBounce::buttonPressedSound);
 				CatBounce::currentScene = CatBounce::Scenes::Credits;
 			}
 
 			if (buttons[3].clicked)
 			{
-				slSoundPlay(CatBounce::buttonPressed);
+				slSoundPlay(CatBounce::buttonPressedSound);
 				ExitPanel::isActive = !ExitPanel::isActive;
 			}
 		}

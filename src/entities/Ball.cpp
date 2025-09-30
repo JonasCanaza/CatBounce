@@ -1,4 +1,6 @@
 #include "Ball.h"
+#include "../screen/GameplayScreen.h"
+#include "../utilities/Constants.h"
 
 #include "sl.h"
 #include <ctime>
@@ -8,6 +10,14 @@ static const int MAX_EDGE_HITS = 4;
 static const int MAX_FISH_BREAK = 4;
 static const int MAX_ROCK_HITS = 3;
 static const int MAX_ROCK_BREAK = 3;
+
+// TEXTURES
+
+static int normalBallTexture;
+static int fireBallTexture;
+static int waterBallTexture;
+
+// SOUNDS
 
 static int edgeHit1;
 static int edgeHit2;
@@ -25,8 +35,16 @@ static int rockBreak2;
 static int rockBreak3;
 static int fishSpecialHit;
 
+// PRIVATE FUNCTIONS
+
+static void SetBallDefault();
+
 void InitBall()
 {
+	normalBallTexture = slLoadTexture("res/images/ball/normalBall.png");
+	fireBallTexture = slLoadTexture("res/images/ball/fireBall.png");
+	waterBallTexture = slLoadTexture("res/images/ball/waterBall.png");
+
 	edgeHit1 = slLoadWAV("res/sound/ball/edgeHit/hit01.wav");
 	edgeHit2 = slLoadWAV("res/sound/ball/edgeHit/hit02.wav");
 	edgeHit3 = slLoadWAV("res/sound/ball/edgeHit/hit03.wav");
@@ -46,9 +64,54 @@ void InitBall()
 	rockBreak3 = slLoadWAV("res/sound/ball/fishRockBreaking/hit03.wav");
 
 	fishSpecialHit = slLoadWAV("res/sound/ball/specialBreakingFish/hit01.wav");
+
+	SetBallDefault();
 }
 
-void PlayEdgeHitSound()
+void DrawBall()
+{
+	int texture = 0;
+
+	switch (Gameplay::ball.type)
+	{
+	case BallType::Normal:
+
+		texture = normalBallTexture;
+
+		break;
+	case BallType::Fire:
+
+		texture = fireBallTexture;
+
+		break;
+	case BallType::Water:
+
+		texture = waterBallTexture;
+
+		break;
+	default:
+
+		// THERE ARE NO MORE TYPES OF BALLS
+
+		break;
+	}
+
+	slSetForeColor(1.0, 1.0, 1.0, 1.0);
+	slSprite(texture, Gameplay::ball.x, Gameplay::ball.y, Gameplay::ball.radius * 2.0, Gameplay::ball.radius * 2.0);
+}
+
+static void SetBallDefault()
+{
+	Gameplay::ball.radius = 15.0;
+	Gameplay::ball.x = Gameplay::pall.x;
+	Gameplay::ball.y = Gameplay::pall.y + Gameplay::pall.height / 2.0 + Gameplay::ball.radius + 0.1;
+	Gameplay::ball.speedX = 300.0;
+	Gameplay::ball.speedY = 325.0;
+	Gameplay::ball.isActive = false;
+	Gameplay::ball.type = BallType::Normal;
+}
+
+void PlayDefaultHitSound()
 {
 	switch (rand() % MAX_EDGE_HITS)
 	{

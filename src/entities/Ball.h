@@ -1,5 +1,12 @@
 #pragma once
 
+enum class BallType
+{
+	Normal,
+	Fire,
+	Water
+};
+
 struct Ball
 {
 	double radius;
@@ -8,10 +15,13 @@ struct Ball
 	double speedX;
 	double speedY;
 	bool isActive;
+	BallType type;
+	double durationEffect;
 };
 
 void InitBall();
-void PlayEdgeHitSound();
+void DrawBall();
+void PlayDefaultHitSound();
 void PlayFishBreakSound();
 void PlayRockHitSound();
 void PlayRockBreakSound();

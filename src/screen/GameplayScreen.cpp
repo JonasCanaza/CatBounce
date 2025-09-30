@@ -5,13 +5,14 @@
 #include "../panel/GameOverPanel.h"
 
 #include "sl.h"
+#include <iostream>
 #include <string>
 #include <cmath>
-#include <iostream>
 
 namespace Gameplay
 {
 	bool isGameOver;
+
 	int gameplayMusic;
 	int gameplayMusicLoop;
 
@@ -29,6 +30,7 @@ namespace Gameplay
 	static double collisionCooldown = 0.0;
 
 	// PRIVATE FUNCTIONS
+
 	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
 	static bool CheckCollisionBallBrick(Ball ball, Fish brick);
 	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
@@ -37,9 +39,10 @@ namespace Gameplay
 
 	void Init()
 	{
-		isGameOver = false;;
+		isGameOver = false;
 
 		gameplayMusic = slLoadWAV("res/music/gameplayMusic.wav");
+
 		gameplayBackground = slLoadTexture("res/images/background/gameplay.png");
 		gameplayHUD = slLoadTexture("res/images/ui/gameplayHUD.png");
 		normalPalletteTexture = slLoadTexture("res/images/pallette/normalPallette.png");
@@ -52,13 +55,6 @@ namespace Gameplay
 		pall.lives = 1;
 		pall.score = 0;
 		pall.isWinner = false;
-
-		ball.radius = 15.0;
-		ball.x = SCREEN_WIDTH / 2.0;
-		ball.y = SCREEN_HEIGHT / 2.0;
-		ball.speedX = 300.0;
-		ball.speedY = 325.0;
-		ball.isActive = false;
 
 		InitBall();
 		InitFish(fish);
@@ -89,11 +85,11 @@ namespace Gameplay
 			{
 				pall.x += pall.speed * deltaTime;
 			}
-		}
 
-		if (slGetKey(' '))
-		{
-			ball.isActive = true;
+			if (slGetKey(' '))
+			{
+				ball.isActive = true;
+			}
 		}
 	}
 
@@ -126,6 +122,11 @@ namespace Gameplay
 			{
 				ball.y += ball.speedY * deltaTime;
 				ball.x += ball.speedX * deltaTime;
+				
+				if (ball.type != BallType::Normal)
+				{
+					ball.durationEffect -= deltaTime;
+				}
 			}
 			else
 			{
@@ -155,20 +156,20 @@ namespace Gameplay
 			{
 				ball.x = ball.radius;
 				ball.speedX *= -1.0;
-				PlayEdgeHitSound();
+				PlayDefaultHitSound();
 			}
 			if (ball.x + ball.radius > SCREEN_WIDTH)
 			{
 				ball.x = SCREEN_WIDTH - ball.radius;
 				ball.speedX *= -1.0;
-				PlayEdgeHitSound();
+				PlayDefaultHitSound();
 			}
 
 			if (ball.y + ball.radius > MAXIMUM_TOP_Y)
 			{
 				ball.y = MAXIMUM_TOP_Y - ball.radius;
 				ball.speedY *= -1.0;
-				PlayEdgeHitSound();
+				PlayDefaultHitSound();
 			}
 			if (ball.y + ball.radius < 0)
 			{
@@ -190,161 +191,186 @@ namespace Gameplay
 				{
 					if (fish[row][col].isActive && CheckCollisionBallBrick(ball, fish[row][col]))
 					{
-						double deltaX = ball.x - fish[row][col].x;
-						double deltaY = ball.y - fish[row][col].y;
-
-						double overlapHorizontal = (fish[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
-						double overlapVertical = (fish[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
-
-						if (overlapHorizontal < overlapVertical)
+						if (ball.type == BallType::Normal || ball.type == BallType::Water)
 						{
-							if (deltaX < 0) // LEFT
-							{
-								ball.x = fish[row][col].x - fish[row][col].width / 2.0 - ball.radius - 0.1;
-								ball.speedX = -fabs(ball.speedX);
+							double deltaX = ball.x - fish[row][col].x;
+							double deltaY = ball.y - fish[row][col].y;
 
-								if (ball.y > fish[row][col].y)
+							double overlapHorizontal = (fish[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
+							double overlapVertical = (fish[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
+
+							if (overlapHorizontal < overlapVertical)
+							{
+								if (deltaX < 0) // LEFT
 								{
-									//std::cout << "LEFT TOP collision" << std::endl;
-									ball.speedY = fabs(ball.speedY);
+									ball.x = fish[row][col].x - fish[row][col].width / 2.0 - ball.radius - 0.1;
+									ball.speedX = -fabs(ball.speedX);
+
+									if (ball.y > fish[row][col].y)
+									{
+										//std::cout << "LEFT TOP collision" << std::endl;
+										ball.speedY = fabs(ball.speedY);
+									}
+									else
+									{
+										//std::cout << "LEFT BOTTOM collision" << std::endl;
+										ball.speedY = -fabs(ball.speedY);
+									}
 								}
-								else
+								else // RIGHT
 								{
-									//std::cout << "LEFT BOTTOM collision" << std::endl;
-									ball.speedY = -fabs(ball.speedY);
+									ball.x = fish[row][col].x + fish[row][col].width / 2.0 + ball.radius + 0.1;
+									ball.speedX = fabs(ball.speedX);
+
+									if (ball.y > fish[row][col].y)
+									{
+										//std::cout << "RIGHT TOP collision" << std::endl;
+										ball.speedY = fabs(ball.speedY);
+									}
+									else
+									{
+										//std::cout << "RIGHT BOTTOM collision" << std::endl;
+										ball.speedY = -fabs(ball.speedY);
+									}
 								}
 							}
-							else // RIGHT
+							else
 							{
-								ball.x = fish[row][col].x + fish[row][col].width / 2.0 + ball.radius + 0.1;
-								ball.speedX = fabs(ball.speedX);
-
-								if (ball.y > fish[row][col].y)
+								if (deltaY > 0) // TOP
 								{
-									//std::cout << "RIGHT TOP collision" << std::endl;
+									ball.y = fish[row][col].y + fish[row][col].height / 2.0 + ball.radius + 0.1;
 									ball.speedY = fabs(ball.speedY);
+
+									if (ball.x < fish[row][col].x)
+									{
+										//std::cout << "TOP LEFT collision" << std::endl;
+										ball.speedX = -fabs(ball.speedX);
+									}
+									else
+									{
+										//std::cout << "TOP RIGHT collision" << std::endl;
+										ball.speedX = fabs(ball.speedX);
+									}
 								}
-								else
+								else // BOTTOM
 								{
-									//std::cout << "RIGHT BOTTOM collision" << std::endl;
+									ball.y = fish[row][col].y - fish[row][col].height / 2.0 - ball.radius - 0.1;
 									ball.speedY = -fabs(ball.speedY);
+
+									if (ball.x < fish[row][col].x)
+									{
+										//std::cout << "BOTTOM LEFT collision" << std::endl;
+										ball.speedX = -fabs(ball.speedX);
+									}
+									else
+									{
+										//std::cout << "BOTTOM RIGHT collision" << std::endl;
+										ball.speedX = fabs(ball.speedX);
+									}
 								}
+							}
+						}
+
+						if (ball.type != BallType::Water)
+						{
+							switch (fish[row][col].type)
+							{
+							case FishType::Normal:
+
+								PlayFishBreakSound();
+								pall.score += 100;
+								fish[row][col].isActive = false;
+
+								break;
+							case FishType::Fire:
+							case FishType::Speed:
+							case FishType::Slowness:
+							case FishType::Life:
+							case FishType::Water:
+							case FishType::Poison:
+
+								PlayFishSpecialSound();
+								pall.score += 125;
+								fish[row][col].isActive = false;
+
+								switch (fish[row][col].type)
+								{
+								case FishType::Fire:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Fire);
+
+									break;
+								case FishType::Speed:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Speed);
+
+									break;
+								case FishType::Slowness:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Slowness);
+
+									break;
+								case FishType::Life:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Life);
+
+									break;
+								case FishType::Water:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Water);
+
+									break;
+								case FishType::Poison:
+
+									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Poison);
+
+									break;
+								default:
+
+									// THERE ARE NO MORE TYPES OF SPECIAL FISH
+
+									break;
+								}
+
+								break;
+							case FishType::Rock:
+
+								switch (fish[row][col].rockState)
+								{
+								case RockState::Intact:
+								case RockState::Cracked:
+								case RockState::Broken:
+
+									PlayRockHitSound();
+									pall.score += 25;
+									fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
+
+									break;
+								case RockState::Fractured:
+
+									PlayRockBreakSound();
+									pall.score += 50;
+									fish[row][col].isActive = false;
+
+									break;
+								default:
+
+									// THERE ARE NO MORE TYPES OF STONE FISH
+
+									break;
+								}
+
+								break;
+							default:
+
+								// THERE ARE NO MORE TYPES OF FISH
+
+								break;
 							}
 						}
 						else
 						{
-							if (deltaY > 0) // TOP
-							{
-								ball.y = fish[row][col].y + fish[row][col].height / 2.0 + ball.radius + 0.1;
-								ball.speedY = fabs(ball.speedY);
-								
-								if (ball.x < fish[row][col].x)
-								{
-									//std::cout << "TOP LEFT collision" << std::endl;
-									ball.speedX = -fabs(ball.speedX);
-								}
-								else
-								{
-									//std::cout << "TOP RIGHT collision" << std::endl;
-									ball.speedX = fabs(ball.speedX);
-								}
-							}
-							else // BOTTOM
-							{
-								ball.y = fish[row][col].y - fish[row][col].height / 2.0 - ball.radius - 0.1;
-								ball.speedY = -fabs(ball.speedY);
-
-								if (ball.x < fish[row][col].x)
-								{
-									//std::cout << "BOTTOM LEFT collision" << std::endl;
-									ball.speedX = -fabs(ball.speedX);
-								}
-								else
-								{
-									//std::cout << "BOTTOM RIGHT collision" << std::endl;
-									ball.speedX = fabs(ball.speedX);
-								}
-							}
-						}
-
-						switch (fish[row][col].type)
-						{
-						case FishType::Normal:
-
-							PlayFishBreakSound();
-							pall.score += 100;
-							fish[row][col].isActive = false;
-							std::cout << "POP Fish normal" << std::endl;
-
-							break;
-						case FishType::Fire:
-						case FishType::Speed:
-						case FishType::Slowness:
-
-							PlayFishSpecialSound();
-							pall.score += 125;
-							fish[row][col].isActive = false;
-
-							switch (fish[row][col].type)
-							{
-							case FishType::Fire:
-
-								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Fire);
-
-								break;
-							case FishType::Speed:
-
-								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Speed);
-
-								break;
-							case FishType::Slowness:
-
-								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Slowness);
-
-								break;
-							default:
-
-								// THERE ARE NO MORE TYPES OF SPECIAL FISH
-
-								break;
-							}
-
-							std::cout << "POP Fish Special" << std::endl;
-
-							break;
-						case FishType::Rock:
-
-							switch (fish[row][col].rockState)
-							{
-							case RockState::Intact:
-							case RockState::Cracked:
-							case RockState::Broken:
-
-								PlayRockHitSound();
-								pall.score += 25;
-								fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
-
-								break;
-							case RockState::Fractured:
-
-								PlayRockBreakSound();
-								pall.score += 50;
-								fish[row][col].isActive = false;
-
-								break;
-							default:
-
-								// THERE ARE NO MORE TYPES OF STONE FISH
-
-								break;
-							}
-
-							break;
-						default:
-
-							// THERE ARE NO MORE TYPES OF FISH
-
-							break;
+							PlayDefaultHitSound();
 						}
 					}
 				}
@@ -415,7 +441,7 @@ namespace Gameplay
 
 				collisionCooldown = 0.75;
 
-				PlayEdgeHitSound();
+				PlayDefaultHitSound();
 			}
 
 			for (int i = 0; i < MAX_FISH_SPECIALS; i++)
@@ -427,6 +453,7 @@ namespace Gameplay
 					case PowerItemType::Fire:
 
 						PlaySpellSound(PowerItemType::Fire);
+						ball.type = BallType::Fire;
 						std::cout << "Fire power-up collected!" << std::endl;
 
 						break;
@@ -434,15 +461,35 @@ namespace Gameplay
 
 						PlaySpellSound(PowerItemType::Speed);
 						std::cout << "Speed power-up collected!" << std::endl;
-						ball.speedX *= 1.2;
-						ball.speedY *= 1.2;
+						pall.speed *= 1.1;
 
 						break;
 					case PowerItemType::Slowness:
 
 						PlaySpellSound(PowerItemType::Slowness);
 						std::cout << "Slowness power-down collected!" << std::endl;
-						pall.speed *= 0.8;
+						pall.speed *= 0.9;
+
+						break;
+					case PowerItemType::Life:
+
+						PlaySpellSound(PowerItemType::Life);
+						std::cout << "Life power-up collected!" << std::endl;
+						pall.lives++;
+
+						break;
+					case PowerItemType::Water:
+
+						PlaySpellSound(PowerItemType::Water);
+						std::cout << "Water power-down collected!" << std::endl;
+						ball.type = BallType::Water;
+
+						break;
+					case PowerItemType::Poison:
+
+						PlaySpellSound(PowerItemType::Poison);
+						std::cout << "Poison power-down collected!" << std::endl;
+						pall.lives--;
 
 						break;
 					default:
@@ -495,8 +542,7 @@ namespace Gameplay
 		slSetForeColor(0.0, 0.0, 1.0, 1.0);
 		slRectangleOutline(pall.x, pall.y, pall.width, pall.height);
 
-		slSetForeColor(1.0, 1.0, 1.0, 1.0);
-		slSprite(CatBounce::normalBallTexture, ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);
+		DrawBall();
 
 		slSetForeColor(1.0, 0.0, 0.0, 1.0);
 		slRectangleOutline(ball.x, ball.y, ball.radius * 2.0, ball.radius * 2.0);

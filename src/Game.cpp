@@ -18,9 +18,7 @@ namespace CatBounce
 	int normalFont;
 	int specialFont;
 
-	int buttonPressed;
-
-	int normalBallTexture;
+	int buttonPressedSound;
 
 	int normalButtonTexture;
 	int hoverButtonTexture;
@@ -56,11 +54,7 @@ namespace CatBounce
 		normalButtonTexture = slLoadTexture("res/images/ui/normalButton.png");
 		hoverButtonTexture = slLoadTexture("res/images/ui/hoverButton.png");
 		pressedButtonTexture = slLoadTexture("res/images/ui/pressedButton.png");
-		buttonPressed = slLoadWAV("res/sound/ui/buttonPressed.wav");
-
-		// BALL
-
-		normalBallTexture = slLoadTexture("res/images/ball/normalBall.png");
+		buttonPressedSound = slLoadWAV("res/sound/ui/buttonPressed.wav");
 
 		// TEXT
 

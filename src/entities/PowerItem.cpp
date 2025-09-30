@@ -2,13 +2,23 @@
 
 #include "sl.h"
 
+// TEXTURES
+
 static int fireTexture;
 static int speedTexture;
 static int slownessTexture;
+static int lifeTexture;
+static int waterTexture;
+static int poisonTexture;
+
+// SOUNDS
 
 static int fireSound;
 static int speedSound;
 static int slownessSound;
+static int lifeSound;
+static int waterSound;
+static int poisonSound;
 
 static void SetPowerItemsDefaults(PowerItem powerItem[MAX_FISH_SPECIALS]);
 
@@ -17,10 +27,16 @@ void InitPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
     fireTexture = slLoadTexture("res/images/spell/fire.png");
     speedTexture = slLoadTexture("res/images/spell/speed.png");
     slownessTexture = slLoadTexture("res/images/spell/slowness.png");
+    lifeTexture = slLoadTexture("res/images/spell/life.png");
+    waterTexture = slLoadTexture("res/images/spell/water.png");
+    poisonTexture = slLoadTexture("res/images/spell/poison.png");
 
-    fireSound = slLoadWAV("res/sound/spell/fireSpell.wav");
-    speedSound = slLoadWAV("res/sound/spell/speedSpell.wav");
-    slownessSound = slLoadWAV("res/sound/spell/slowSpell.wav");
+    fireSound = slLoadWAV("res/sound/spell/fire.wav");
+    speedSound = slLoadWAV("res/sound/spell/speed.wav");
+    slownessSound = slLoadWAV("res/sound/spell/slow.wav");
+    lifeSound = slLoadWAV("res/sound/spell/life.wav");
+    waterSound = slLoadWAV("res/sound/spell/water.wav");
+    poisonSound = slLoadWAV("res/sound/spell/poison.wav");
 
     SetPowerItemsDefaults(powerItem);
 }
@@ -83,6 +99,21 @@ void DrawPowerItems(PowerItem powerItem[MAX_FISH_SPECIALS])
                 texture = slownessTexture;
                 
                 break;
+            case PowerItemType::Life:
+
+                texture = lifeTexture;
+
+                break;
+            case PowerItemType::Water:
+
+                texture = waterTexture;
+
+                break;
+            case PowerItemType::Poison:
+                
+                texture = poisonTexture;
+
+                break;
             default:
 
                 // THERE ARE NO MORE TYPES OF SPECIAL FISH
@@ -142,6 +173,21 @@ void PlaySpellSound(PowerItemType type)
     case PowerItemType::Slowness:
 
         slSoundPlay(slownessSound);
+
+        break;
+    case PowerItemType::Life:
+
+        slSoundPlay(lifeSound);
+
+        break;
+    case PowerItemType::Water:
+
+        slSoundPlay(waterSound);
+
+        break;
+    case PowerItemType::Poison:
+
+        slSoundPlay(poisonSound);
 
         break;
     default:

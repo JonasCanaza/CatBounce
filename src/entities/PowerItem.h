@@ -7,7 +7,10 @@ enum class PowerItemType
     None,
     Fire,
     Speed,
-    Slowness
+    Slowness,
+    Life,
+    Water,
+    Poison
 };
 
 struct PowerItem
