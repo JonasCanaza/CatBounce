@@ -30,11 +30,15 @@ namespace Gameplay
 
 	// PRIVATE FUNCTIONS
 
-	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball);
-	static bool CheckCollisionBallBrick(Ball ball, Fish brick);
-	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH]);
+	static void UpdateNoCollisionTimePallBall();
+	static bool CheckCollisionPalletteBall();
+	static bool CheckCollisionBallFish(Ball ball, Fish brick);
 	static bool CheckCollisionPallettePowerItem(Pallette pall, PowerItem power);
-	static bool IsPlayerAlive(Pallette pall);
+	static void HandleBallFishCollisions();
+	static void HandleBallPalletteCollision();
+	static void HandlePallettePowerItemCollisions();
+	static bool HasActiveFish();
+	static bool IsPlayerAlive();
 
 	void Init()
 	{
@@ -94,430 +98,31 @@ namespace Gameplay
 
 		if (!PausePanel::isActive && !isGameOver)
 		{
-			if (collisionCooldown > 0.0)
-			{
-				collisionCooldown -= deltaTime;
+			UpdateNoCollisionTimePallBall();
+			UpdateEffectTimer(deltaTime);
 
-				if (collisionCooldown <= 0.0)
-				{
-					collisionCooldown = 0.0;
-				}
-			}
+			UpdatePallete();
+			UpdateBall(deltaTime);
 
-			if (ball.type != BallType::Normal)
-			{
-				ball.durationEffect -= deltaTime;
+			HandleBallFishCollisions();
+			HandleBallPalletteCollision();
+			HandlePallettePowerItemCollisions();
 
-				if (ball.durationEffect <= 0.0)
-				{
-					ball.durationEffect = 0.0;
-					ball.type = BallType::Normal;
-				}
-			}
+			UpdatePowerItems(powerItem, deltaTime);
 
-			std::cout << ball.durationEffect << std::endl;
-
-			if (pall.x - pall.width / 2.0 < 0)
-			{
-				pall.x = pall.width / 2.0;
-			}
-			if (pall.x + pall.width / 2.0 > SCREEN_WIDTH)
-			{
-				pall.x = SCREEN_WIDTH - pall.width / 2;
-			}
-
-			if (ball.isActive)
-			{
-				ball.y += ball.speedY * deltaTime;
-				ball.x += ball.speedX * deltaTime;
-				
-				if (ball.type != BallType::Normal)
-				{
-					ball.durationEffect -= deltaTime;
-				}
-			}
-			else
-			{
-				ball.x = pall.x;
-				ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
-
-				//BALL TEST!!!
-				//if (slGetKey(SL_KEY_UP))
-				//{
-				//	ball.y += 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_LEFT))
-				//{
-				//	ball.x -= 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_DOWN))
-				//{
-				//	ball.y -= 300 * deltaTime;
-				//}
-				//if (slGetKey(SL_KEY_RIGHT))
-				//{
-				//	ball.x += 300 * deltaTime;
-				//}
-			}
-
-			if (ball.x - ball.radius < 0)
-			{
-				ball.x = ball.radius;
-				ball.speedX *= -1.0;
-				PlayDefaultHitSound();
-			}
-			if (ball.x + ball.radius > SCREEN_WIDTH)
-			{
-				ball.x = SCREEN_WIDTH - ball.radius;
-				ball.speedX *= -1.0;
-				PlayDefaultHitSound();
-			}
-
-			if (ball.y + ball.radius > MAXIMUM_TOP_Y)
-			{
-				ball.y = MAXIMUM_TOP_Y - ball.radius;
-				ball.speedY *= -1.0;
-				PlayDefaultHitSound();
-			}
-			if (ball.y + ball.radius < 0)
-			{
-				ball.speedY = std::abs(ball.speedY);
-				pall.lives--;
-
-				SetPalleteDefaultPosition();
-				SetBallDefaultPosition();
-
-				if (pall.lives <= 0)
-				{
-					isGameOver = true;
-					GameOverPanel::isActive = true;
-					pall.isWinner = false;
-				}
-			}
-
-			for (int row = 0; row < MAX_ROW_FISH; row++)
-			{
-				for (int col = 0; col < MAX_COL_FISH; col++)
-				{
-					if (fish[row][col].isActive && CheckCollisionBallBrick(ball, fish[row][col]))
-					{
-						if (ball.type == BallType::Normal || ball.type == BallType::Water)
-						{
-							double deltaX = ball.x - fish[row][col].x;
-							double deltaY = ball.y - fish[row][col].y;
-
-							double overlapHorizontal = (fish[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
-							double overlapVertical = (fish[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
-
-							if (overlapHorizontal < overlapVertical)
-							{
-								if (deltaX < 0) // LEFT
-								{
-									ball.x = fish[row][col].x - fish[row][col].width / 2.0 - ball.radius - 0.1;
-									ball.speedX = -fabs(ball.speedX);
-
-									if (ball.y > fish[row][col].y)
-									{
-										//std::cout << "LEFT TOP collision" << std::endl;
-										ball.speedY = fabs(ball.speedY);
-									}
-									else
-									{
-										//std::cout << "LEFT BOTTOM collision" << std::endl;
-										ball.speedY = -fabs(ball.speedY);
-									}
-								}
-								else // RIGHT
-								{
-									ball.x = fish[row][col].x + fish[row][col].width / 2.0 + ball.radius + 0.1;
-									ball.speedX = fabs(ball.speedX);
-
-									if (ball.y > fish[row][col].y)
-									{
-										//std::cout << "RIGHT TOP collision" << std::endl;
-										ball.speedY = fabs(ball.speedY);
-									}
-									else
-									{
-										//std::cout << "RIGHT BOTTOM collision" << std::endl;
-										ball.speedY = -fabs(ball.speedY);
-									}
-								}
-							}
-							else
-							{
-								if (deltaY > 0) // TOP
-								{
-									ball.y = fish[row][col].y + fish[row][col].height / 2.0 + ball.radius + 0.1;
-									ball.speedY = fabs(ball.speedY);
-
-									if (ball.x < fish[row][col].x)
-									{
-										//std::cout << "TOP LEFT collision" << std::endl;
-										ball.speedX = -fabs(ball.speedX);
-									}
-									else
-									{
-										//std::cout << "TOP RIGHT collision" << std::endl;
-										ball.speedX = fabs(ball.speedX);
-									}
-								}
-								else // BOTTOM
-								{
-									ball.y = fish[row][col].y - fish[row][col].height / 2.0 - ball.radius - 0.1;
-									ball.speedY = -fabs(ball.speedY);
-
-									if (ball.x < fish[row][col].x)
-									{
-										//std::cout << "BOTTOM LEFT collision" << std::endl;
-										ball.speedX = -fabs(ball.speedX);
-									}
-									else
-									{
-										//std::cout << "BOTTOM RIGHT collision" << std::endl;
-										ball.speedX = fabs(ball.speedX);
-									}
-								}
-							}
-						}
-
-						if (ball.type != BallType::Water)
-						{
-							switch (fish[row][col].type)
-							{
-							case FishType::Normal:
-
-								PlayFishBreakSound();
-								pall.score += 100;
-								fish[row][col].isActive = false;
-
-								break;
-							case FishType::Fire:
-							case FishType::Speed:
-							case FishType::Slowness:
-							case FishType::Life:
-							case FishType::Water:
-							case FishType::Poison:
-
-								PlayFishSpecialSound();
-								pall.score += 125;
-								fish[row][col].isActive = false;
-
-								switch (fish[row][col].type)
-								{
-								case FishType::Fire:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Fire);
-
-									break;
-								case FishType::Speed:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Speed);
-
-									break;
-								case FishType::Slowness:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Slowness);
-
-									break;
-								case FishType::Life:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Life);
-
-									break;
-								case FishType::Water:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Water);
-
-									break;
-								case FishType::Poison:
-
-									SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Poison);
-
-									break;
-								default:
-
-									// THERE ARE NO MORE TYPES OF SPECIAL FISH
-
-									break;
-								}
-
-								break;
-							case FishType::Rock:
-
-								switch (fish[row][col].rockState)
-								{
-								case RockState::Intact:
-								case RockState::Cracked:
-								case RockState::Broken:
-
-									PlayRockHitSound();
-									pall.score += 25;
-									fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
-
-									break;
-								case RockState::Fractured:
-
-									PlayRockBreakSound();
-									pall.score += 150;
-									fish[row][col].isActive = false;
-
-									break;
-								default:
-
-									// THERE ARE NO MORE TYPES OF STONE FISH
-
-									break;
-								}
-
-								break;
-							default:
-
-								// THERE ARE NO MORE TYPES OF FISH
-
-								break;
-							}
-						}
-						else
-						{
-							PlayDefaultHitSound();
-						}
-					}
-				}
-			}
-
-			if (CheckCollisionPalletteBall(pall, ball) && collisionCooldown <= 0.0)
-			{
-				double deltaX = ball.x - pall.x;
-				double deltaY = ball.y - pall.y;
-
-				double overlapHorizontal = (pall.width / 2.0 + ball.radius) - fabs(deltaX);
-				double overlapVertical = (pall.height / 2.0 + ball.radius) - fabs(deltaY);
-
-				if (overlapHorizontal < overlapVertical)
-				{
-					if (deltaX < 0) // LEFT
-					{
-						ball.x = pall.x - pall.width / 2.0 - ball.radius - 0.1;
-						ball.speedX = -fabs(ball.speedX);
-
-						if (ball.y > pall.y)
-						{
-							ball.speedY *= -1.0;
-							//std::cout << "Left TOP!" << std::endl;
-						}
-						else
-						{
-							//std::cout << "Left BUTTOM!" << std::endl;
-						}
-					}
-					else // RIGHT
-					{
-						ball.x = pall.x + pall.width / 2.0 + ball.radius + 0.1;
-						ball.speedX = fabs(ball.speedX);
-
-						if (ball.y > pall.y)
-						{
-							ball.speedY *= -1.0;
-							//std::cout << "Right TOP!" << std::endl;
-						}
-						else
-						{
-							//std::cout << "Right BUTTOM!" << std::endl;
-						}
-					}
-				}
-				else // TOP
-				{
-					ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
-					ball.speedY *= -1.0;
-					//std::cout << "Top!" << std::endl;
-				}
-
-				double relativeImpact = (ball.x - pall.x) / (pall.width / 2.0);
-
-				if (relativeImpact < -1.0)
-				{
-					relativeImpact = -1.0;
-				}
-
-				if (relativeImpact > 1.0)
-				{
-					relativeImpact = 1.0;
-				}
-
-				double maxDeviation = 400.0;
-				ball.speedX = maxDeviation * relativeImpact;
-
-				collisionCooldown = 0.75;
-
-				PlayDefaultHitSound();
-			}
-
-			for (int i = 0; i < MAX_FISH_SPECIALS; i++)
-			{
-				if (powerItem[i].isActive && CheckCollisionPallettePowerItem(pall, powerItem[i]))
-				{
-					switch (powerItem[i].type)
-					{
-					case PowerItemType::Fire:
-
-						PlaySpellSound(PowerItemType::Fire);
-						ball.type = BallType::Fire;
-						ball.durationEffect = 6.5;
-
-						break;
-					case PowerItemType::Speed:
-
-						PlaySpellSound(PowerItemType::Speed);
-						pall.speed *= 1.1;
-
-						break;
-					case PowerItemType::Slowness:
-
-						PlaySpellSound(PowerItemType::Slowness);
-						pall.speed *= 0.9;
-
-						break;
-					case PowerItemType::Life:
-
-						PlaySpellSound(PowerItemType::Life);
-						pall.lives++;
-
-						break;
-					case PowerItemType::Water:
-
-						PlaySpellSound(PowerItemType::Water);
-						ball.type = BallType::Water;
-						ball.durationEffect = 15.0;
-
-						break;
-					case PowerItemType::Poison:
-
-						PlaySpellSound(PowerItemType::Poison);
-						pall.lives--;
-
-						break;
-					default:
-
-						// THERE ARE NO MORE TYPES OF POWER ITEMS
-
-						break;
-					}
-
-					powerItem[i].isActive = false;
-					powerItem[i].type = PowerItemType::None;
-				}
-			}
-
-			if (!HasActiveBricks(fish))
+			if (!HasActiveFish())
 			{
 				isGameOver = true;
 				GameOverPanel::isActive = true;
 				pall.isWinner = true;
 			}
 
-			UpdatePowerItems(powerItem, deltaTime);
+			if (!IsPlayerAlive())
+			{
+				isGameOver = true;
+				GameOverPanel::isActive = true;
+				pall.isWinner = false;
+			}
 		}
 		else
 		{
@@ -539,12 +144,9 @@ namespace Gameplay
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
 		slSprite(gameplayBackground, SCREEN_WIDTH / 2.0, SCREEN_HEIGHT / 2.0, SCREEN_WIDTH, SCREEN_HEIGHT);
 
-		DrawPowerItems(powerItem);
-
 		DrawFish(fish);
-
+		DrawPowerItems(powerItem);
 		DrawPallete();
-
 		DrawBall();
 
 		slSetForeColor(1.0, 1.0, 1.0, 1.0);
@@ -574,7 +176,20 @@ namespace Gameplay
 		slRender();
 	}
 
-	static bool CheckCollisionPalletteBall(Pallette pall, Ball ball)
+	static void UpdateNoCollisionTimePallBall()
+	{
+		if (collisionCooldown > 0.0)
+		{
+			collisionCooldown -= deltaTime;
+
+			if (collisionCooldown <= 0.0)
+			{
+				collisionCooldown = 0.0;
+			}
+		}
+	}
+
+	static bool CheckCollisionPalletteBall()
 	{
 		double leftPall = pall.x - pall.width / 2.0;
 		double rightPall = pall.x + pall.width / 2.0;
@@ -597,17 +212,17 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool CheckCollisionBallBrick(Ball ball, Fish brick)
+	static bool CheckCollisionBallFish(Ball ball, Fish fish)
 	{
 		double leftBall = ball.x - ball.radius;
 		double rightBall = ball.x + ball.radius;
 		double topBall = ball.y + ball.radius;
 		double bottomBall = ball.y - ball.radius;
 
-		double leftBrick = brick.x - brick.width / 2.0;
-		double rightBrick = brick.x + brick.width / 2.0;
-		double topBrick = brick.y + brick.height / 2.0;
-		double bottomBrick = brick.y - brick.height / 2.0;
+		double leftBrick = fish.x - fish.width / 2.0;
+		double rightBrick = fish.x + fish.width / 2.0;
+		double topBrick = fish.y + fish.height / 2.0;
+		double bottomBrick = fish.y - fish.height / 2.0;
 
 		if (rightBrick < leftBall ||
 			leftBrick > rightBall ||
@@ -618,22 +233,6 @@ namespace Gameplay
 		}
 
 		return true;
-	}
-
-	static bool HasActiveBricks(Fish bricks[MAX_ROW_FISH][MAX_COL_FISH])
-	{
-		for (int row = 0; row < MAX_ROW_FISH; row++)
-		{	
-			for (int col = 0; col < MAX_COL_FISH; col++)
-			{
-				if (bricks[row][col].isActive)
-				{
-					return true;
-				}
-			}
-		}
-
-		return false;
 	}
 
 	static bool CheckCollisionPallettePowerItem(Pallette pall, PowerItem power)
@@ -659,7 +258,328 @@ namespace Gameplay
 		return true;
 	}
 
-	static bool IsPlayerAlive(Pallette pall)
+	static void HandleBallFishCollisions()
+	{
+		for (int row = 0; row < MAX_ROW_FISH; row++)
+		{
+			for (int col = 0; col < MAX_COL_FISH; col++)
+			{
+				if (fish[row][col].isActive && CheckCollisionBallFish(ball, fish[row][col]))
+				{
+					if (ball.type == BallType::Normal || ball.type == BallType::Water)
+					{
+						double deltaX = ball.x - fish[row][col].x;
+						double deltaY = ball.y - fish[row][col].y;
+
+						double overlapHorizontal = (fish[row][col].width / 2.0 + ball.radius) - fabs(deltaX);
+						double overlapVertical = (fish[row][col].height / 2.0 + ball.radius) - fabs(deltaY);
+
+						if (overlapHorizontal < overlapVertical)
+						{
+							if (deltaX < 0) // LEFT
+							{
+								ball.x = fish[row][col].x - fish[row][col].width / 2.0 - ball.radius - 0.1;
+								ball.speedX = -fabs(ball.speedX);
+
+								if (ball.y > fish[row][col].y)
+								{
+									ball.speedY = fabs(ball.speedY);
+								}
+								else
+								{
+									ball.speedY = -fabs(ball.speedY);
+								}
+							}
+							else // RIGHT
+							{
+								ball.x = fish[row][col].x + fish[row][col].width / 2.0 + ball.radius + 0.1;
+								ball.speedX = fabs(ball.speedX);
+
+								if (ball.y > fish[row][col].y)
+								{
+									ball.speedY = fabs(ball.speedY);
+								}
+								else
+								{
+									ball.speedY = -fabs(ball.speedY);
+								}
+							}
+						}
+						else
+						{
+							if (deltaY > 0) // TOP
+							{
+								ball.y = fish[row][col].y + fish[row][col].height / 2.0 + ball.radius + 0.1;
+								ball.speedY = fabs(ball.speedY);
+
+								if (ball.x < fish[row][col].x)
+								{
+									ball.speedX = -fabs(ball.speedX);
+								}
+								else
+								{
+									ball.speedX = fabs(ball.speedX);
+								}
+							}
+							else // BOTTOM
+							{
+								ball.y = fish[row][col].y - fish[row][col].height / 2.0 - ball.radius - 0.1;
+								ball.speedY = -fabs(ball.speedY);
+
+								if (ball.x < fish[row][col].x)
+								{
+									ball.speedX = -fabs(ball.speedX);
+								}
+								else
+								{
+									ball.speedX = fabs(ball.speedX);
+								}
+							}
+						}
+					}
+
+					if (ball.type != BallType::Water)
+					{
+						switch (fish[row][col].type)
+						{
+						case FishType::Normal:
+
+							PlayFishBreakSound();
+							pall.score += 100;
+							fish[row][col].isActive = false;
+
+							break;
+						case FishType::Fire:
+						case FishType::Speed:
+						case FishType::Slowness:
+						case FishType::Life:
+						case FishType::Water:
+						case FishType::Poison:
+
+							PlayFishSpecialSound();
+							pall.score += 125;
+							fish[row][col].isActive = false;
+
+							switch (fish[row][col].type)
+							{
+							case FishType::Fire:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Fire);
+
+								break;
+							case FishType::Speed:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Speed);
+
+								break;
+							case FishType::Slowness:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Slowness);
+
+								break;
+							case FishType::Life:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Life);
+
+								break;
+							case FishType::Water:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Water);
+
+								break;
+							case FishType::Poison:
+
+								SpawnPowerItem(powerItem, fish[row][col].x, fish[row][col].y, PowerItemType::Poison);
+
+								break;
+							default:
+
+								// THERE ARE NO MORE TYPES OF SPECIAL FISH
+
+								break;
+							}
+
+							break;
+						case FishType::Rock:
+
+							switch (fish[row][col].rockState)
+							{
+							case RockState::Intact:
+							case RockState::Cracked:
+							case RockState::Broken:
+
+								PlayRockHitSound();
+								pall.score += 25;
+								fish[row][col].rockState = static_cast<RockState>(static_cast<int>(fish[row][col].rockState) - 1);
+
+								break;
+							case RockState::Fractured:
+
+								PlayRockBreakSound();
+								pall.score += 150;
+								fish[row][col].isActive = false;
+
+								break;
+							default:
+
+								// THERE ARE NO MORE TYPES OF STONE FISH
+
+								break;
+							}
+
+							break;
+						default:
+
+							// THERE ARE NO MORE TYPES OF FISH
+
+							break;
+						}
+					}
+					else
+					{
+						PlayDefaultHitSound();
+					}
+				}
+			}
+		}
+	}
+
+	static void HandleBallPalletteCollision()
+	{
+		if (CheckCollisionPalletteBall() && collisionCooldown <= 0.0)
+		{
+			double deltaX = ball.x - pall.x;
+			double deltaY = ball.y - pall.y;
+
+			double overlapHorizontal = (pall.width / 2.0 + ball.radius) - fabs(deltaX);
+			double overlapVertical = (pall.height / 2.0 + ball.radius) - fabs(deltaY);
+
+			if (overlapHorizontal < overlapVertical)
+			{
+				if (deltaX < 0) // LEFT
+				{
+					ball.x = pall.x - pall.width / 2.0 - ball.radius - 0.1;
+					ball.speedX = -fabs(ball.speedX);
+
+					if (ball.y > pall.y)
+					{
+						ball.speedY *= -1.0;
+					}
+				}
+				else // RIGHT
+				{
+					ball.x = pall.x + pall.width / 2.0 + ball.radius + 0.1;
+					ball.speedX = fabs(ball.speedX);
+
+					if (ball.y > pall.y)
+					{
+						ball.speedY *= -1.0;
+					}
+				}
+			}
+			else // TOP
+			{
+				ball.y = pall.y + pall.height / 2.0 + ball.radius + 0.1;
+				ball.speedY *= -1.0;
+			}
+
+			double relativeImpact = (ball.x - pall.x) / (pall.width / 2.0);
+
+			if (relativeImpact < -1.0)
+			{
+				relativeImpact = -1.0;
+			}
+
+			if (relativeImpact > 1.0)
+			{
+				relativeImpact = 1.0;
+			}
+
+			double maxDeviation = 400.0;
+			ball.speedX = maxDeviation * relativeImpact;
+
+			collisionCooldown = 0.75;
+
+			PlayDefaultHitSound();
+		}
+	}
+
+	static void HandlePallettePowerItemCollisions()
+	{
+		for (int i = 0; i < MAX_FISH_SPECIALS; i++)
+		{
+			if (powerItem[i].isActive && CheckCollisionPallettePowerItem(pall, powerItem[i]))
+			{
+				switch (powerItem[i].type)
+				{
+				case PowerItemType::Fire:
+
+					PlaySpellSound(PowerItemType::Fire);
+					ball.type = BallType::Fire;
+					ball.durationEffect = 6.5;
+
+					break;
+				case PowerItemType::Speed:
+
+					PlaySpellSound(PowerItemType::Speed);
+					pall.speed *= 1.15;
+
+					break;
+				case PowerItemType::Slowness:
+
+					PlaySpellSound(PowerItemType::Slowness);
+					pall.speed *= 0.85;
+
+					break;
+				case PowerItemType::Life:
+
+					PlaySpellSound(PowerItemType::Life);
+					pall.lives++;
+
+					break;
+				case PowerItemType::Water:
+
+					PlaySpellSound(PowerItemType::Water);
+					ball.type = BallType::Water;
+					ball.durationEffect = 15.0;
+
+					break;
+				case PowerItemType::Poison:
+
+					PlaySpellSound(PowerItemType::Poison);
+					pall.lives--;
+
+					break;
+				default:
+
+					// THERE ARE NO MORE TYPES OF POWER ITEMS
+
+					break;
+				}
+
+				powerItem[i].isActive = false;
+				powerItem[i].type = PowerItemType::None;
+			}
+		}
+	}
+
+	static bool HasActiveFish()
+	{
+		for (int row = 0; row < MAX_ROW_FISH; row++)
+		{	
+			for (int col = 0; col < MAX_COL_FISH; col++)
+			{
+				if (fish[row][col].isActive)
+				{
+					return true;
+				}
+			}
+		}
+
+		return false;
+	}
+
+	static bool IsPlayerAlive()
 	{
 		if (pall.lives <= 0)
 		{

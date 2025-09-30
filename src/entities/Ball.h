@@ -20,9 +20,11 @@ struct Ball
 };
 
 void InitBall();
+void UpdateBall(double deltaTime);
 void DrawBall();
 void SetBallDefault();
 void SetBallDefaultPosition();
+void UpdateEffectTimer(double deltaTime);
 void PlayDefaultHitSound();
 void PlayFishBreakSound();
 void PlayRockHitSound();

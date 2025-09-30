@@ -5,6 +5,7 @@
 #include "sl.h"
 #include <ctime>
 #include <stdlib.h>
+#include <cmath>
 
 static const int MAX_EDGE_HITS = 4;
 static const int MAX_FISH_BREAK = 4;
@@ -35,6 +36,8 @@ static int rockBreak2;
 static int rockBreak3;
 static int fishSpecialHit;
 
+static int GetRandomXAddress();
+
 void InitBall()
 {
 	normalBallTexture = slLoadTexture("res/images/ball/normalBall.png");
@@ -62,6 +65,56 @@ void InitBall()
 	fishSpecialHit = slLoadWAV("res/sound/ball/specialBreakingFish/hit01.wav");
 
 	SetBallDefault();
+}
+
+void UpdateBall(double deltaTime)
+{
+	if (Gameplay::ball.isActive)
+	{
+		Gameplay::ball.y += Gameplay::ball.speedY * deltaTime;
+		Gameplay::ball.x += Gameplay::ball.speedX * deltaTime;
+
+		if (Gameplay::ball.type != BallType::Normal)
+		{
+			Gameplay::ball.durationEffect -= deltaTime;
+		}
+	}
+	else
+	{
+		Gameplay::ball.x = Gameplay::pall.x;
+		Gameplay::ball.y = Gameplay::pall.y + Gameplay::pall.height / 2.0 + Gameplay::ball.radius + 0.1;
+	}
+
+	if (Gameplay::ball.x - Gameplay::ball.radius < 0)
+	{
+		Gameplay::ball.x = Gameplay::ball.radius;
+		Gameplay::ball.speedX *= -1.0;
+		PlayDefaultHitSound();
+	}
+	if (Gameplay::ball.x + Gameplay::ball.radius > SCREEN_WIDTH)
+	{
+		Gameplay::ball.x = SCREEN_WIDTH - Gameplay::ball.radius;
+		Gameplay::ball.speedX *= -1.0;
+		PlayDefaultHitSound();
+	}
+
+	if (Gameplay::ball.y + Gameplay::ball.radius > MAXIMUM_TOP_Y)
+	{
+		Gameplay::ball.y = MAXIMUM_TOP_Y - Gameplay::ball.radius;
+		Gameplay::ball.speedY *= -1.0;
+		PlayDefaultHitSound();
+	}
+	if (Gameplay::ball.y + Gameplay::ball.radius < 0)
+	{
+		Gameplay::ball.speedY = std::abs(Gameplay::ball.speedY);
+		Gameplay::pall.lives--;
+
+		if (Gameplay::pall.lives > 0)
+		{
+			SetPalleteDefaultPosition();
+			SetBallDefaultPosition();
+		}
+	}
 }
 
 void DrawBall()
@@ -99,7 +152,7 @@ void DrawBall()
 void SetBallDefault()
 {
 	SetBallDefaultPosition();
-	Gameplay::ball.speedX = 300.0;
+	Gameplay::ball.radius = 15.0;
 	Gameplay::ball.speedY = 325.0;
 	Gameplay::ball.type = BallType::Normal;
 	Gameplay::ball.durationEffect = 0.0;
@@ -107,10 +160,29 @@ void SetBallDefault()
 
 void SetBallDefaultPosition()
 {
-	Gameplay::ball.radius = 15.0;
+	Gameplay::ball.speedX = 300.0 * GetRandomXAddress();
 	Gameplay::ball.x = Gameplay::pall.x;
 	Gameplay::ball.y = Gameplay::pall.y + Gameplay::pall.height / 2.0 + Gameplay::ball.radius + 0.1;
 	Gameplay::ball.isActive = false;
+}
+
+void UpdateEffectTimer(double deltaTime)
+{
+	if (Gameplay::ball.type != BallType::Normal)
+	{
+		Gameplay::ball.durationEffect -= deltaTime;
+
+		if (Gameplay::ball.durationEffect <= 0.0)
+		{
+			Gameplay::ball.durationEffect = 0.0;
+			Gameplay::ball.type = BallType::Normal;
+		}
+	}
+}
+
+static int GetRandomXAddress()
+{
+	return (rand() % 2 == 0) ? 1 : -1;
 }
 
 void PlayDefaultHitSound()

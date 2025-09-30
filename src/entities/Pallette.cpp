@@ -15,9 +15,16 @@ void InitPallette()
 	SetPalleteDefault();
 }
 
-void UpdatePallete(double deltaTime)
+void UpdatePallete()
 {
-
+	if (Gameplay::pall.x - Gameplay::pall.width / 2.0 < 0)
+	{
+		Gameplay::pall.x = Gameplay::pall.width / 2.0;
+	}
+	if (Gameplay::pall.x + Gameplay::pall.width / 2.0 > SCREEN_WIDTH)
+	{
+		Gameplay::pall.x = SCREEN_WIDTH - Gameplay::pall.width / 2;
+	}
 }
 
 void DrawPallete()

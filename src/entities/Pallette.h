@@ -13,7 +13,7 @@ struct Pallette
 };
 
 void InitPallette();
-void UpdatePallete(double deltaTime);
+void UpdatePallete();
 void DrawPallete();
 void SetPalleteDefault();
 void SetPalleteDefaultPosition();
